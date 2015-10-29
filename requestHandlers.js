@@ -1,5 +1,24 @@
 function start(request, response) {
 	
+	var mongoose = require('mongoose');
+	mongoose.connect('mongodb://127.0.0.1/UserCache');
+	
+	var db = mongoose.connection;
+	db.on('error', console.error.bind(console, 'Connection error:'));
+	db.once('open', function (callback) {
+		console.log('Database opened');
+	});
+	
+	var Password = mongoose.Schema({
+		name: String,
+		username: String,
+		password: String
+	});
+	
+	var PWmodel = mongoose.model('Store', Password);
+	
+	
+	
 	//Capture POST data sent from client with request emitters
 	var str = '';		
 	request.on('data', function(chunk) {

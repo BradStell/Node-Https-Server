@@ -24,7 +24,7 @@ var req = https.request(options, function(response) {
 	
 	// Capture the response sent back from the server
 	// with the response event emitters
-	var str = '';	
+	var str = '';
 	response.on('data', function(chunk) {
 		str += chunk;
 	});
