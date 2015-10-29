@@ -39,6 +39,7 @@ var req = https.request(options, function(response) {
 var secretMessage = {
 	"Username" : "Brad",
 	"Password" : "12345",
+	"method" : "GET",
 	"restOfContent" : {
 		"something1" : "first",
 		"something2" : "second"

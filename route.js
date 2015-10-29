@@ -1,8 +1,8 @@
-function route (handle, pathname, newstr) {
+function route (handle, pathname, request, response) {
 	console.log("routing " + pathname);
 	
 	if (typeof handle[pathname] === 'function') {
-		handle[pathname](newstr);
+		handle[pathname](request, response);
 		
 	} else {
 		console.log('Not a valid path');
