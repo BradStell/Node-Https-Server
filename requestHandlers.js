@@ -1,23 +1,16 @@
+var Store;
+var mongoose;
+
 function start(request, response) {
-	
-	var mongoose = require('mongoose');
+	Store = require('./store-schema'); 
+	mongoose = require('mongoose');
 	mongoose.connect('mongodb://127.0.0.1/UserCache');
 	
-	var db = mongoose.connection;
-	db.on('error', console.error.bind(console, 'Connection error:'));
-	db.once('open', function (callback) {
-		console.log('Database opened');
-	});
-	
-	var Password = mongoose.Schema({
-		name: String,
-		username: String,
-		password: String
-	});
-	
-	var PWmodel = mongoose.model('Store', Password);
-	
-	
+	// var db = mongoose.connection;
+	// db.on('error', console.error.bind(console, 'Connection error:'));
+	// db.once('open', function (callback) {
+	// 	console.log('Database opened');
+	// });
 	
 	//Capture POST data sent from client with request emitters
 	var str = '';		
@@ -61,7 +54,20 @@ function start(request, response) {
 
 function Post(otherContent, response) {
 	console.log('in post');
-	
+
+	var store = new Store({
+		name: otherContent.name,
+		username: otherContent.username,
+		password: otherContent.password
+	});
+
+	store.save(function (err) {
+		if (err) {
+			console.log(err);
+		}
+		mongoose.connection.close();
+	});
+
 	console.log('In post with ' + JSON.stringify(otherContent));
 }
 
