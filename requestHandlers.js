@@ -26,12 +26,7 @@ function start(request, response) {
 		var newstr = JSON.parse(str);				
 		
 		// Verify correct POST data for access to server
-		if (newstr.Username === 'Brad' && newstr.Password === '12345') {
-			
-			// Display access to the client
-			// response.writeHead(200, {"Content-Type": "text/plain"});
-			// response.write("You have access to the kingdom");
-			//response.end();
+		if (newstr.Username === 'Brad' && newstr.Password === '12345') {			
 			
 			// DO SECRET STUFF WITH CLIENT POST HERE 
 			if (newstr.method === 'POST')
@@ -56,9 +51,9 @@ function Post(otherContent, response) {
 	response.writeHead(200, {'Content-Type': 'text/plan'});
 	
 	// Query the db to see if the item exists already
-	Store.findOne({ 'name': otherContent.name }, function (err, pass) {
+	Store.findOne({ 'name': (otherContent.name).toLowerCase() }, function (err, pass) {
 		
-		if (err) console.log(err);
+		if (err) console.log('ERROR:' + err);
 		
 		// If a document exists in db with name, check to see if username
 		// already exists in that document
@@ -74,7 +69,7 @@ function Post(otherContent, response) {
 				addToExistingPass(pass, otherContent, response);
 			} else {
 				console.log('Account Already Exists');
-				response.write('\nPassword Exists');
+				response.write('\nUsername Already Exists');
 				response.end();
 			}
 		}		 
@@ -89,21 +84,20 @@ function Post(otherContent, response) {
 function addToExistingPass(pass, otherContent, response) {
 	
 	Store.findById(pass._id, function (err, passs) {
-		if (err) console.log(err);
 		
-		passs.accounts.push( 
-			{
-				username: otherContent.username,
-				password: otherContent.password
-			}
-		);
+		if (err) console.log('Lookup Error: ' + err);
+		
+		passs.accounts.push({
+			username: otherContent.username,
+			password: otherContent.password
+		});
 		
 		passs.save( function (err) {
-			if (err) console.log(err);
+			if (err) console.log('Save Error: ' + err);
 			
 			response.write('Password Saved');
 			response.end();
-			mongoose.connection.close();
+			//mongoose.connection.close();
 		});		
 	});
 }
@@ -111,15 +105,18 @@ function addToExistingPass(pass, otherContent, response) {
 function saveNewPost(otherContent, response) {
 	
 	var store = new Store();
-	store.name = otherContent.name;
-	store.accounts.push( {username: otherContent.username, password: otherContent.password} );
+	store.name = (otherContent.name).toLowerCase();
+	store.userSpelledName = otherContent.name;
+	store.accounts.push({
+		username: otherContent.username,
+		password: otherContent.password});
 
 	store.save(function (err) {
-		if (err) console.log(err);
+		if (err) console.log('Save Error: ' + err);
 		
 		response.write('Successfully saved: \n' + store);
 		response.end();				
-		mongoose.connection.close();
+		//mongoose.connection.close();
 	});
 }
 

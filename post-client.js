@@ -41,9 +41,9 @@ var secretMessage = {
 	"Password" : "12345",
 	"method" : "POST",
 	"restOfContent" : {
-		"name" : "gmail",
-		"username" : "NEWUSER@gmail.com",
-		"password" : "PASSBABY"
+		"name" : "GiThUb",
+		"username" : "BradStell",
+		"password" : "HackethThiseth"
 	}
 };
 
