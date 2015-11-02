@@ -41,13 +41,12 @@ var secretMessage = {
 	"Password" : "12345",
 	"method" : "POST",
 	"restOfContent" : {
-		"name" : "github",
-		"username" : "kingDerp",
-		"password" : "faggotlord"
+		"name" : "gmail",
+		"username" : "NEWUSER@gmail.com",
+		"password" : "PASSBABY"
 	}
 };
 
 // Write the secret password in the POST data
-//req.write('{"my-object": ' + thing + '}');
 req.write(JSON.stringify(secretMessage));
 req.end();

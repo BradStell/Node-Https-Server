@@ -1,16 +1,17 @@
 var Store;
 var mongoose;
+Store = require('./store-schema'); 
+mongoose = require('mongoose');
+mongoose.connect('mongodb://127.0.0.1/UserCache');
 
-function start(request, response) {
-	Store = require('./store-schema'); 
-	mongoose = require('mongoose');
-	mongoose.connect('mongodb://127.0.0.1/UserCache');
+function start(request, response) {	
 	
-	// var db = mongoose.connection;
-	// db.on('error', console.error.bind(console, 'Connection error:'));
-	// db.once('open', function (callback) {
-	// 	console.log('Database opened');
-	// });
+	// Make sure db connection is good
+	var db = mongoose.connection;
+	db.on('error', console.error.bind(console, 'Connection error:'));	
+	db.once('open', function (callback) {
+		console.log('Database opened');
+	});
 	
 	//Capture POST data sent from client with request emitters
 	var str = '';		
@@ -28,9 +29,9 @@ function start(request, response) {
 		if (newstr.Username === 'Brad' && newstr.Password === '12345') {
 			
 			// Display access to the client
-			response.writeHead(200, {"Content-Type": "text/plain"});
-			response.write("You have access to the kingdom");
-			response.end();
+			// response.writeHead(200, {"Content-Type": "text/plain"});
+			// response.write("You have access to the kingdom");
+			//response.end();
 			
 			// DO SECRET STUFF WITH CLIENT POST HERE 
 			if (newstr.method === 'POST')
@@ -41,8 +42,6 @@ function start(request, response) {
 				Delete(newstr.restOfContent, response);
 			else if (newstr.method === 'PUT')
 				Update(newstr.restOfContent, response);
-				
-			console.log(newstr.restOfContent);
 			
 		} else {
 			// If tier1 auth was correct but username/password wrong
@@ -53,40 +52,104 @@ function start(request, response) {
 
 
 function Post(otherContent, response) {
-	console.log('in post');
+	console.log('In POST');
+	response.writeHead(200, {'Content-Type': 'text/plan'});
+	
+	// Query the db to see if the item exists already
+	Store.findOne({ 'name': otherContent.name }, function (err, pass) {
+		
+		if (err) console.log(err);
+		
+		// If a document exists in db with name, check to see if username
+		// already exists in that document
+		if (pass) {
+						
+			var exists = false;			
+			for (var i = 0; i < pass.accounts.length; i++) {
+				if (pass.accounts[i].username === otherContent.username)
+					exists = true;
+			}
+			
+			if (!exists) {
+				addToExistingPass(pass, otherContent, response);
+			} else {
+				console.log('Account Already Exists');
+				response.write('\nPassword Exists');
+				response.end();
+			}
+		}		 
+		
+		// If the password does not already exist add it to the db
+		else {
+			saveNewPost(otherContent, response);			
+		}
+	});	
+}
 
-	var store = new Store({
-		name: otherContent.name,
-		username: otherContent.username,
-		password: otherContent.password
+function addToExistingPass(pass, otherContent, response) {
+	
+	Store.findById(pass._id, function (err, passs) {
+		if (err) console.log(err);
+		
+		passs.accounts.push( 
+			{
+				username: otherContent.username,
+				password: otherContent.password
+			}
+		);
+		
+		passs.save( function (err) {
+			if (err) console.log(err);
+			
+			response.write('Password Saved');
+			response.end();
+			mongoose.connection.close();
+		});		
 	});
+}
+
+function saveNewPost(otherContent, response) {
+	
+	var store = new Store();
+	store.name = otherContent.name;
+	store.accounts.push( {username: otherContent.username, password: otherContent.password} );
 
 	store.save(function (err) {
-		if (err) {
-			console.log(err);
-		}
+		if (err) console.log(err);
+		
+		response.write('Successfully saved: \n' + store);
+		response.end();				
 		mongoose.connection.close();
 	});
-
-	console.log('In post with ' + JSON.stringify(otherContent));
 }
 
 function Get(otherContent, response) {
-	console.log('in get');
+	console.log('In GET');
 	
-	console.log('In post with ' + JSON.stringify(otherContent));
+	// Find all passwords and return to client
+	Store.find().lean().exec( function (err, pass) {
+		
+		response.writeHead(200, {"Content-Type": "application/json"});
+		response.write(JSON.stringify(pass));
+		response.end();
+	});
+	
+	
 }
 
 function Delete(otherContent, response) {
 	console.log('in delete');
 	
-	console.log('In post with ' + JSON.stringify(otherContent));
+	console.log('In delete with ' + JSON.stringify(otherContent));
+	response.end();
 }
 
 function Update(otherContent, response) {
 	console.log('in put');
 	
-	console.log('In post with ' + JSON.stringify(otherContent));
+	console.log('In put with ' + JSON.stringify(otherContent));
+	
+	response.end();
 }
 
 function displayErrorMessage(response) {

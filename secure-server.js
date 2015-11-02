@@ -21,7 +21,7 @@ function start(route, handle) {
 		var pathname = url.parse(req.url).pathname;
 		
 		// Check for authentication in header
-		if (req.headers.tier1 === '45r97diIj3099KpqnzlapEIv810nZaaS0' /*&& req.method === 'POST'*/) {		
+		if (req.headers.tier1 === '45r97diIj3099KpqnzlapEIv810nZaaS0') {		
 			
 			route(handle, pathname, req, res);			
 			
