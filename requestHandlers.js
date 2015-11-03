@@ -2,9 +2,11 @@ var Store;
 var mongoose;
 Store = require('./store-schema'); 
 mongoose = require('mongoose');
-mongoose.connect('mongodb://127.0.0.1/UserCache');
+
 
 function start(request, response) {	
+	
+	mongoose.connect('mongodb://127.0.0.1/UserCache');
 	
 	// Make sure db connection is good
 	var db = mongoose.connection;
@@ -78,6 +80,8 @@ function Post(otherContent, response) {
 		else {
 			saveNewPost(otherContent, response);			
 		}
+		
+		mongoose.connection.close();
 	});	
 }
 
