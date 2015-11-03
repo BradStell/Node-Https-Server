@@ -77,11 +77,10 @@ function Post(otherContent, response) {
 		}		 
 		
 		// If the password does not already exist add it to the db
-		else {
+		else {			
 			saveNewPost(otherContent, response);			
-		}
-		
-		mongoose.connection.close();
+		}		
+		//mongoose.connection.close();
 	});	
 }
 
@@ -101,7 +100,7 @@ function addToExistingPass(pass, otherContent, response) {
 			
 			response.write('Password Saved');
 			response.end();
-			//mongoose.connection.close();
+			mongoose.connection.close();
 		});		
 	});
 }
@@ -113,14 +112,15 @@ function saveNewPost(otherContent, response) {
 	store.userSpelledName = otherContent.name;
 	store.accounts.push({
 		username: otherContent.username,
-		password: otherContent.password});
-
+		password: otherContent.password
+	});
+	
 	store.save(function (err) {
 		if (err) console.log('Save Error: ' + err);
 		
 		response.write('Successfully saved: \n' + store);
 		response.end();				
-		//mongoose.connection.close();
+		mongoose.connection.close();
 	});
 }
 

@@ -3,7 +3,7 @@ var mongoose = require('mongoose');
 var Password = mongoose.Schema({
 		name: String,
 		userSpelledName: String,
-		accounts: []
+		accounts: Array
 	});
 	
 var PWmodel = mongoose.model('Store', Password);
