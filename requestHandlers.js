@@ -139,15 +139,43 @@ function Get(otherContent, response) {
 }
 
 function Delete(otherContent, response) {
-	console.log('in delete');
+	console.log('in DELETE');
 	
-	console.log('In delete with ' + JSON.stringify(otherContent));
-	response.end();
+	// Remove account from document
+	if (otherContent.whatToDelete === 'account') {
+		console.log('in account');
+		
+		Store.update(
+			{ 'name': otherContent.name },
+			{ $pull: { 'accounts': { 'username': otherContent.which } } 
+		}, function (err) {
+			response.write('Removed account');
+			response.end();
+		});
+	}
+	
+	// Remove whoel document from db
+	else if (otherContent.whatToDelete === 'document') {
+		
+		Store.remove({ 'name': otherContent.name }, function(err) {
+			if (err) console.log(err);
+			
+			else {
+				response.write('Document Deleted');
+				
+				mongoose.connection.close();
+				response.end();
+			}			
+		});
+	}
+	
+	
 }
 
 function Update(otherContent, response) {
 	console.log('In PUT');
 	
+	// Update the password
 	if (otherContent.toChange === 'password') {
 		Store.update({'name': otherContent.name, 'accounts.password': otherContent.old}, {'$set': {
 			'accounts.$.password': otherContent.new
@@ -158,7 +186,10 @@ function Update(otherContent, response) {
 			response.end();
 			mongoose.connection.close();
 		});
-	} else if (otherContent.toChange === 'username') {
+	} 
+	
+	// Update the username (probably not likely)
+	else if (otherContent.toChange === 'username') {
 		Store.update({'name': otherContent.name, 'accounts.username': otherContent.old}, {'$set': {
 			'accounts.$.username': otherContent.new
 		}}, function (err) {

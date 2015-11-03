@@ -39,11 +39,11 @@ var req = https.request(options, function(response) {
 var secretMessage = {
 	"Username" : "Brad",
 	"Password" : "12345",
-	"method" : "POST",
+	"method" : "DELETE",
 	"restOfContent" : {
 		"name" : "github",
-		"username" : "User1",
-		"password" : "psswrd1"
+		"whatToDelete": "account", // account, or document
+		"which": "User1" // which account/document name
 	}
 };
 
