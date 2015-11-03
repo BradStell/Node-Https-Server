@@ -39,12 +39,7 @@ var req = https.request(options, function(response) {
 var secretMessage = {
 	"Username" : "Brad",
 	"Password" : "12345",
-	"method" : "POST",
-	"restOfContent" : {
-		"name" : "GiThUb",
-		"username" : "BradStell",
-		"password" : "HackethThiseth"
-	}
+	"method" : "GET"
 };
 
 // Write the secret password in the POST data

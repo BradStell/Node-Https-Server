@@ -131,11 +131,11 @@ function Get(otherContent, response) {
 	Store.find().lean().exec( function (err, pass) {
 		
 		response.writeHead(200, {"Content-Type": "application/json"});
-		response.write(JSON.stringify(pass));
+		response.write(JSON.stringify(pass, null, 4));
 		response.end();
-	});
-	
-	
+		
+		mongoose.connection.close();
+	});	
 }
 
 function Delete(otherContent, response) {
