@@ -43,8 +43,8 @@ var secretMessage = {
 	"restOfContent" : {
 		"name" : "github",	// Name of account to make changes to
 		"toChange" : "username", // or password,
-		"old" : "original",
-		"new" : "newUsername" // or new password
+		"old" : "BradStell",
+		"new" : "NewU$$erN@me" // or new password
 	}
 };
 

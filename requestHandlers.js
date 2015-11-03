@@ -148,30 +148,27 @@ function Delete(otherContent, response) {
 function Update(otherContent, response) {
 	console.log('In PUT');
 	
-	
-	
-	Store.findOne({ 'name': (otherContent.name).toLowerCase() }, function (err, pass) {
-		
-		if (err) console.log('ERROR:' + err);
-		
-		Store.findById(pass._id, function (err, passs) {
-		
-			if (err) console.log('Lookup Error: ' + err);
+	if (otherContent.toChange === 'password') {
+		Store.update({'name': otherContent.name, 'accounts.password': otherContent.old}, {'$set': {
+			'accounts.$.password': otherContent.new
+		}}, function (err) {
+			if (err) console.log(err); 
 			
-			// CHANGE PASSWORD HERE
-			
-			
-			passs.save( function (err) {
-				if (err) console.log('Save Error: ' + err);
-				
-				console.log('Password Updated');
-				response.write('Password Updated');
-				response.end();
-			});		
+			response.write('saved');
+			response.end();
+			mongoose.connection.close();
 		});
-		
-		mongoose.connection.close();
-	});
+	} else if (otherContent.toChange === 'username') {
+		Store.update({'name': otherContent.name, 'accounts.username': otherContent.old}, {'$set': {
+			'accounts.$.username': otherContent.new
+		}}, function (err) {
+			if (err) console.log(err); 
+			
+			response.write('saved');
+			response.end();
+			mongoose.connection.close();
+		});
+	}	
 }
 
 function displayErrorMessage(response) {
