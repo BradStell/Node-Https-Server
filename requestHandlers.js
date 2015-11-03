@@ -146,11 +146,32 @@ function Delete(otherContent, response) {
 }
 
 function Update(otherContent, response) {
-	console.log('in put');
+	console.log('In PUT');
 	
-	console.log('In put with ' + JSON.stringify(otherContent));
 	
-	response.end();
+	
+	Store.findOne({ 'name': (otherContent.name).toLowerCase() }, function (err, pass) {
+		
+		if (err) console.log('ERROR:' + err);
+		
+		Store.findById(pass._id, function (err, passs) {
+		
+			if (err) console.log('Lookup Error: ' + err);
+			
+			// CHANGE PASSWORD HERE
+			
+			
+			passs.save( function (err) {
+				if (err) console.log('Save Error: ' + err);
+				
+				console.log('Password Updated');
+				response.write('Password Updated');
+				response.end();
+			});		
+		});
+		
+		mongoose.connection.close();
+	});
 }
 
 function displayErrorMessage(response) {
