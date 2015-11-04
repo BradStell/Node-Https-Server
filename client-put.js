@@ -42,9 +42,9 @@ var secretMessage = {
 	"method" : "PUT",
 	"restOfContent" : {
 		"name" : "github",	// Name of account to make changes to
-		"toChange" : "username", // or password,
-		"old" : "BradStell",
-		"new" : "NewU$$erN@me" // or new password
+		"toChange" : "password", // or password,
+		"old" : "pa$$wrd2",	// Needs to be username of account to change
+		"new" : "newPa$$w#d" // or new password
 	}
 };
 

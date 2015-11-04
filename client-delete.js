@@ -42,8 +42,8 @@ var secretMessage = {
 	"method" : "DELETE",
 	"restOfContent" : {
 		"name" : "github",
-		"whatToDelete": "account", // account, or document
-		"which": "User1" // which account/document name
+		"whatToDelete": "document", // account, or document
+		"which": "Account1" // which account name (Ignored if deleting whole document)
 	}
 };
 

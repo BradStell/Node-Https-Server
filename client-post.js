@@ -41,9 +41,9 @@ var secretMessage = {
 	"Password" : "12345",
 	"method" : "POST",
 	"restOfContent" : {
-		"name" : "github",
-		"username" : "User1",
-		"password" : "psswrd1"
+		"name" : "GitHub",
+		"username" : "Account3",
+		"password" : "pa$$wrd3"
 	}
 };
 

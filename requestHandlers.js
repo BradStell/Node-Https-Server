@@ -73,14 +73,14 @@ function Post(otherContent, response) {
 				console.log('Account Already Exists');
 				response.write('\nUsername Already Exists');
 				response.end();
+				mongoose.connection.close();
 			}
 		}		 
 		
 		// If the password does not already exist add it to the db
 		else {			
 			saveNewPost(otherContent, response);			
-		}		
-		//mongoose.connection.close();
+		}	
 	});	
 }
 
@@ -98,9 +98,12 @@ function addToExistingPass(pass, otherContent, response) {
 		passs.save( function (err) {
 			if (err) console.log('Save Error: ' + err);
 			
-			response.write('Password Saved');
-			response.end();
-			mongoose.connection.close();
+			else {
+				console.log('Saved Successfully');
+				response.write('Account Saved');
+				response.end();
+				mongoose.connection.close();
+			}			
 		});		
 	});
 }
@@ -118,9 +121,12 @@ function saveNewPost(otherContent, response) {
 	store.save(function (err) {
 		if (err) console.log('Save Error: ' + err);
 		
-		response.write('Successfully saved: \n' + store);
-		response.end();				
-		mongoose.connection.close();
+		else {
+			console.log('Saved Successfully');
+			response.write('Successfully saved: \n' + store);
+			response.end();				
+			mongoose.connection.close();
+		}		
 	});
 }
 
@@ -134,6 +140,8 @@ function Get(otherContent, response) {
 		response.write(JSON.stringify(pass, null, 4));
 		response.end();
 		
+		console.log('Returned:\n' + JSON.stringify(pass, null, 4));
+		
 		mongoose.connection.close();
 	});	
 }
@@ -143,33 +151,40 @@ function Delete(otherContent, response) {
 	
 	// Remove account from document
 	if (otherContent.whatToDelete === 'account') {
-		console.log('in account');
 		
-		Store.update(
-			{ 'name': otherContent.name },
-			{ $pull: { 'accounts': { 'username': otherContent.which } } 
-		}, function (err) {
-			response.write('Removed account');
-			response.end();
+		Store.update( { 'name': otherContent.name }, { $pull: 
+			{ 'accounts': { 'username': otherContent.which }
+		}},
+		function (err) {
+			if (err) console.log(err);
+			
+			else {
+				response.write('Removed account ' + otherContent.which);
+				response.end();
+				
+				mongoose.connection.close();
+				
+				console.log('Removed account ' + otherContent.which);
+			}			
 		});
 	}
 	
 	// Remove whoel document from db
 	else if (otherContent.whatToDelete === 'document') {
 		
-		Store.remove({ 'name': otherContent.name }, function(err) {
+		Store.remove( { 'name': otherContent.name }, function(err) {
 			if (err) console.log(err);
 			
 			else {
 				response.write('Document Deleted');
-				
-				mongoose.connection.close();
 				response.end();
+				
+				console.log('Document Deleted');
+				
+				mongoose.connection.close();				
 			}			
 		});
 	}
-	
-	
 }
 
 function Update(otherContent, response) {
@@ -182,9 +197,13 @@ function Update(otherContent, response) {
 		}}, function (err) {
 			if (err) console.log(err); 
 			
-			response.write('saved');
-			response.end();
-			mongoose.connection.close();
+			else {
+				console.log('Password Changed to ' + otherContent.new);
+			
+				response.write('Password Changed to ' + otherContent.new);
+				response.end();
+				mongoose.connection.close();
+			}			
 		});
 	} 
 	
@@ -195,9 +214,13 @@ function Update(otherContent, response) {
 		}}, function (err) {
 			if (err) console.log(err); 
 			
-			response.write('saved');
-			response.end();
-			mongoose.connection.close();
+			else {
+				console.log('Username Changed to ' + otherContent.new);
+			
+				response.write('Username Changed to ' + otherContent.new);
+				response.end();
+				mongoose.connection.close();	
+			}			
 		});
 	}	
 }
