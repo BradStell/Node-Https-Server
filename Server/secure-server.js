@@ -5,8 +5,8 @@ var url = require('url');
 
 // Read ssl certs from disc
 var options = {
-  key: fs.readFileSync('key.pem'),
-  cert: fs.readFileSync('key-cert.pem')
+  key: fs.readFileSync('./ssh-certs/key.pem'),
+  cert: fs.readFileSync('./ssh-certs/key-cert.pem')
 };
 
 

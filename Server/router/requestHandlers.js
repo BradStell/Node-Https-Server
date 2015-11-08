@@ -1,6 +1,6 @@
 var Store;
 var mongoose;
-Store = require('./store-schema'); 
+Store = require('../model/store-schema'); 
 mongoose = require('mongoose');
 
 
