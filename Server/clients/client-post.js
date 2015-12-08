@@ -41,9 +41,9 @@ var secretMessage = {
 	"Password" : "12345",
 	"method" : "POST",
 	"restOfContent" : {
-		"name" : "GitHub",
-		"username" : "Account3",
-		"password" : "pa$$wrd3"
+		"name" : "Google",
+		"username" : "firstGoogleName",
+		"password" : "fallout4isbadass"
 	}
 };
 
