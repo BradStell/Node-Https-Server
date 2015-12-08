@@ -33,8 +33,25 @@ import android.widget.TextView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -62,7 +79,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     // Http methods
     private enum Method {
-        GET, POST, PUT, DELETE
+        GET, POST, PUT, DELETE;
     }
 
     // UI references.
@@ -324,7 +341,55 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
 
+            BufferedReader reader = null;
+            trustAllHosts();
+            try {
+                String s = "https://10.0.2.2:3000";
+                URL url = new URL(s);
+                HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+                connection.setHostnameVerifier(DO_NOT_VERIFY);
 
+                // add request header
+                connection.setRequestMethod(Method.POST.name());
+                connection.setRequestProperty("tier1", "45r97diIj3099KpqnzlapEIv810nZaaS0");
+                connection.setRequestProperty("Content-Type", "application/json");
+
+                connection.setDoOutput(true);
+                //connection.setDoInput(true);
+
+                DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
+                dos.writeBytes(mBody.toString());
+                dos.flush();
+                dos.close();
+
+                StringBuilder sb = new StringBuilder();
+
+
+                reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
+                String line = "";
+
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line).append("\n");
+                }
+                reader.close();
+
+                Log.d("http", sb.toString());
+
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (reader != null) {
+                        reader.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
 
             // TODO: register the new account here.
             return true;
@@ -365,10 +430,44 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 return new JSONObject() {{
                     put("Username", mUsername);
                     put("Password", mPassword);
-                    put("method", Method.GET);
+                    put("method", Method.GET.name());
                 }};
             } catch (JSONException je) {
                 return null;
+            }
+        }
+
+        private HostnameVerifier DO_NOT_VERIFY = new HostnameVerifier() {
+            @Override
+            public boolean verify(String hostname, SSLSession session) {
+                return true;
+            }
+        };
+
+        private void trustAllHosts() {
+            // Create a trust manager that does not validate certificate chains
+            TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
+                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                    return new java.security.cert.X509Certificate[] {};
+                }
+
+                public void checkClientTrusted(X509Certificate[] chain,
+                                               String authType) throws CertificateException {
+                }
+
+                public void checkServerTrusted(X509Certificate[] chain,
+                                               String authType) throws CertificateException {
+                }
+            } };
+
+            // Install the all-trusting trust manager
+            try {
+                SSLContext sc = SSLContext.getInstance("TLS");
+                sc.init(null, trustAllCerts, new java.security.SecureRandom());
+                HttpsURLConnection
+                        .setDefaultSSLSocketFactory(sc.getSocketFactory());
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
