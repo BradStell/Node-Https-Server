@@ -41,6 +41,8 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -342,12 +344,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // TODO: attempt authentication against a network service.
 
             BufferedReader reader = null;
-            trustAllHosts();
             try {
-                String s = "https://10.0.2.2:3000";
-                URL url = new URL(s);
+
+                URL url = new URL("https", "10.0.2.2", 3000, "/");
                 HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-                connection.setHostnameVerifier(DO_NOT_VERIFY);
 
                 // add request header
                 connection.setRequestMethod(Method.POST.name());
@@ -436,40 +436,5 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 return null;
             }
         }
-
-        private HostnameVerifier DO_NOT_VERIFY = new HostnameVerifier() {
-            @Override
-            public boolean verify(String hostname, SSLSession session) {
-                return true;
-            }
-        };
-
-        private void trustAllHosts() {
-            // Create a trust manager that does not validate certificate chains
-            TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
-                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                    return new java.security.cert.X509Certificate[] {};
-                }
-
-                public void checkClientTrusted(X509Certificate[] chain,
-                                               String authType) throws CertificateException {
-                }
-
-                public void checkServerTrusted(X509Certificate[] chain,
-                                               String authType) throws CertificateException {
-                }
-            } };
-
-            // Install the all-trusting trust manager
-            try {
-                SSLContext sc = SSLContext.getInstance("TLS");
-                sc.init(null, trustAllCerts, new java.security.SecureRandom());
-                HttpsURLConnection
-                        .setDefaultSSLSocketFactory(sc.getSocketFactory());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
     }
 }
-
