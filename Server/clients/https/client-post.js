@@ -42,8 +42,8 @@ var secretMessage = {
 	"method" : "POST",
 	"restOfContent" : {
 		"name" : "Google",
-		"username" : "firstGoogleName",
-		"password" : "fallout4isbadass"
+		"username" : "Brad",
+		"password" : "yesitis$$"
 	}
 };
 

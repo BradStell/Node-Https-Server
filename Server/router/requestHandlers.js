@@ -67,13 +67,14 @@ function Post(otherContent, response) {
 					exists = true;
 			}
 			
-			if (!exists) {
-				addToExistingPass(pass, otherContent, response);
-			} else {
-				console.log('Account Already Exists');
+			if (exists) {
+                console.log('Account Already Exists');
 				response.write('\nUsername Already Exists');
 				response.end();
 				mongoose.connection.close();
+			} else {
+                // Add the new account credentials to the existing account name
+				addToExistingPass(pass, otherContent, response);				
 			}
 		}		 
 		
@@ -100,7 +101,7 @@ function addToExistingPass(pass, otherContent, response) {
 			
 			else {
 				console.log('Saved Successfully');
-				response.write('Account Saved');
+				response.write('New username ' + otherContent.username + ' added to existing account ' + passs.name);
 				response.end();
 				mongoose.connection.close();
 			}			

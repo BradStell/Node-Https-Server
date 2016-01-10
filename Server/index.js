@@ -1,5 +1,5 @@
 // Require my custom Node.js modules
-var server = require("./secure-server");
+var server = require("./http-server");
 var router = require("./router/route");
 var requestHandlers = require("./router/requestHandlers");
 

@@ -3,19 +3,13 @@ var http = require('http');
 var fs = require('fs');
 var url = require('url');
 
-// Read ssl certs from disc
-var options = {
-  key: fs.readFileSync('./ssh-certs/key.pem'),
-  cert: fs.readFileSync('./ssh-certs/key-cert.pem')
-};
-
 
 /*
 	Starts the http server
 */
 function start(route, handle) {
 	
-	http.createServer(options, function (req, res) {
+	http.createServer(function (req, res) {
 		
 		console.log("server hit");
 		var pathname = url.parse(req.url).pathname;
