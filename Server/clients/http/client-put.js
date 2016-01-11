@@ -15,12 +15,8 @@ var options = {
 	}
 };
 
-// Ignores self signed certificates
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-
-
 // Make the http request with the above POST options
-var req = http.request(options, function(response) {
+var req = http.request(function(response) {
 	
 	// Capture the response sent back from the server
 	// with the response event emitters

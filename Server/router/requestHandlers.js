@@ -2,9 +2,10 @@ var Store;
 var mongoose;
 Store = require('../model/store-schema'); 
 mongoose = require('mongoose');
+var encryption = require('encryption-module');
 
 
-function start(request, response) {	
+function start(request, response) {
 	
 	mongoose.connect('mongodb://127.0.0.1/UserCache');
 	
@@ -22,67 +23,86 @@ function start(request, response) {
 	});
 	
 	request.on('end', function() {
-		
-		// JSON.parse(string); --> string to JSON
-		// JSON.stringify(obj); --> JSON to string
-		var newstr = JSON.parse(str);				
-		
-		// Verify correct POST data for access to server
-		if (newstr.Username === 'Brad' && newstr.Password === '12345') {			
-			
-			// DO SECRET STUFF WITH CLIENT POST HERE 
-			if (newstr.method === 'POST')
-				Post(newstr.restOfContent, response);
-			else if (newstr.method === 'GET')
-				Get(newstr.restOfContent, response);
-			else if (newstr.method === 'DELETE')
-				Delete(newstr.restOfContent, response);
-			else if (newstr.method === 'PUT')
-				Update(newstr.restOfContent, response);
-			
-		} else {
-			// If tier1 auth was correct but username/password wrong
-			displayErrorMessage(response);
-		}
+        console.log(str);
+        
+        // Decrypt data
+        encryption.decrypt(str, function(error, decrypted) {
+            
+            if (error) console.log(error);
+            
+            else {
+                // Turn decrypted back into JSON object
+                var decrypt = JSON.parse(decrypted);
+                
+                // JSON.parse(string); --> string to JSON
+                // JSON.stringify(obj); --> JSON to string
+                //var newstr = JSON.parse(str);				
+                
+                // Verify correct POST data for access to server
+                if (decrypt.Username === 'Brad' && decrypt.Password === '12345') {			
+                    
+                    // DO SECRET STUFF WITH CLIENT POST HERE 
+                    if (decrypt.method === 'POST')
+                        Post(decrypt.restOfContent, response);
+                    else if (decrypt.method === 'GET')
+                        Get(response);
+                    else if (decrypt.method === 'DELETE')
+                        Delete(decrypt.restOfContent, response);
+                    else if (decrypt.method === 'PUT')
+                        Update(decrypt.restOfContent, response);
+                    
+                } else {
+                    // If tier1 auth was correct but username/password wrong
+                    displayErrorMessage(response);
+                }   
+            }            
+        });
 	});		
 }
 
 
 function Post(otherContent, response) {
+    
 	console.log('In POST');
 	response.writeHead(200, {'Content-Type': 'text/plan'});
-	
-	// Query the db to see if the item exists already
-	Store.findOne({ 'name': (otherContent.name).toLowerCase() }, function (err, pass) {
-		
-		if (err) console.log('ERROR:' + err);
-		
-		// If a document exists in db with name, check to see if username
-		// already exists in that document
-		if (pass) {
-						
-			var exists = false;			
-			for (var i = 0; i < pass.accounts.length; i++) {
-				if (pass.accounts[i].username === otherContent.username)
-					exists = true;
-			}
-			
-			if (exists) {
-                console.log('Account Already Exists');
-				response.write('\nUsername Already Exists');
-				response.end();
-				mongoose.connection.close();
-			} else {
-                // Add the new account credentials to the existing account name
-				addToExistingPass(pass, otherContent, response);				
-			}
-		}		 
-		
-		// If the password does not already exist add it to the db
-		else {			
-			saveNewPost(otherContent, response);			
-		}	
-	});	
+    
+    // Decrypt otherContent and turn into JSON object
+    encryption.decrypt(otherContent, function(error, decrypted) {
+        
+        decrypted = JSON.parse(decrypted);
+        
+        // Query the db to see if the item exists already
+        Store.findOne({ 'name': (decrypted.name).toLowerCase() }, function (err, pass) {
+            
+            if (err) console.log('ERROR:' + err);
+            
+            // If a document exists in db with name, check to see if username
+            // already exists in that document
+            if (pass) {
+                            
+                var exists = false;			
+                for (var i = 0; i < pass.accounts.length; i++) {
+                    if (pass.accounts[i].username === decrypted.username)
+                        exists = true;
+                }
+                
+                if (exists) {
+                    console.log('Account Already Exists');
+                    response.write('\nUsername Already Exists');
+                    response.end();
+                    mongoose.connection.close();
+                } else {
+                    // Add the new account credentials to the existing account name
+                    addToExistingPass(pass, decrypted, response);				
+                }
+            }		 
+            
+            // If the password does not already exist add it to the db
+            else {			
+                saveNewPost(decrypted, response);			
+            }	
+        });
+    });
 }
 
 function addToExistingPass(pass, otherContent, response) {
@@ -131,19 +151,34 @@ function saveNewPost(otherContent, response) {
 	});
 }
 
-function Get(otherContent, response) {
+function Get(response) {
 	console.log('In GET');
 	
 	// Find all passwords and return to client
 	Store.find().lean().exec( function (err, pass) {
-		
-		response.writeHead(200, {"Content-Type": "application/json"});
-		response.write(JSON.stringify(pass, null, 4));
-		response.end();
-		
-		console.log('Returned:\n' + JSON.stringify(pass, null, 4));
-		
-		mongoose.connection.close();
+        
+        // Encrypt data before sending
+        encryption.encrypt(pass, function(error, encrypted) {
+            
+            // Print error to console and close mongoose connection
+            if (error) {
+                console.log(error);
+                mongoose.connection.close();
+            }
+            
+            // Send encrypted data to client
+            else {
+                response.writeHead(200, {"Content-Type": "application/json"});
+                //response.write(JSON.stringify(pass, null, 4));
+                response.write(encrypted);
+                response.end();
+                
+                //console.log('Returned:\n' + JSON.stringify(pass, null, 4));
+                console.log('Returned:\n' + encrypted);
+                
+                mongoose.connection.close();
+            }
+        });
 	});	
 }
 

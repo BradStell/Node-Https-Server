@@ -1,5 +1,6 @@
 // Node.js modules
 var http = require("http");
+var encryption = require('encryption-module');
 
 
 // http request options for POST
@@ -15,10 +16,6 @@ var options = {
 	}
 };
 
-// Ignores self signed certificates
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-
-
 // Make the http request with the above POST options
 var req = http.request(options, function(response) {
 	
@@ -27,21 +24,38 @@ var req = http.request(options, function(response) {
 	var str = '';
 	response.on('data', function(chunk) {
 		str += chunk;
-	});
-	
+	});	
+    
 	response.on('end', function() {
-		console.log(str);
+		console.log('Encrypted ==>\n' + str);
+        
+        // Decrypt data
+        encryption.decrypt(str, function(error, decrypted) {
+            if (error) console.log(error);
+            
+            else {
+                console.log('\nDecrypted ==>\n' + decrypted);
+            }
+        });
 	});
 });
 
 
 // POST data to send to server, must have correct username/password
 var secretMessage = {
-	"Username" : "Brad",
-	"Password" : "12345",
-	"method" : "GET"
+	'Username': 'Brad',
+    'Password': '12345',
+    'method': 'GET'
 };
 
-// Write the secret password in the POST data
-req.write(JSON.stringify(secretMessage));
-req.end();
+// Encrypt secretMessage for transportation
+encryption.encrypt(secretMessage, function(err, encrypted) {
+    
+    if (err) console.log(err);
+    
+    else {
+        // Write the secret password in the POST data
+        req.write(encrypted);
+        req.end();
+    }
+});
