@@ -8,7 +8,7 @@ var url = require('url');
 */
 function start(route, handle) {
 	
-	http.createServer(function (req, res) {
+	http.createServer(function(req, res) {
 		
 		console.log("server hit");
 		var pathname = url.parse(req.url).pathname;
@@ -16,16 +16,17 @@ function start(route, handle) {
 		// Check for authentication in header
 		if (req.headers.tier1 === '45r97diIj3099KpqnzlapEIv810nZaaS0') {		
 			
-			route(handle, pathname, req, res);			
+			// Route to the desired logic based on the pathname
+			route(handle, pathname, req, res);	
 			
 		} else {
 			// If tier1 auth is incorrect
 			displayErrorMessage(res);
 		}
-		
-	}).listen(3000, function() {
-						console.log("Server started at http://localhost:3000");
-					});
+
+	}).listen(3000, 
+		function() { console.log("Server started at http://localhost:3000"); });
+
 	console.log("Server Started");
 }
 
@@ -35,7 +36,7 @@ function start(route, handle) {
 */
 function displayErrorMessage(response) {
 	response.writeHead(404, {"Content-Type": "text/plain"});
-	response.write("Denied boy");
+	response.write("Web page not found");
 	response.end();
 }
 

@@ -2,7 +2,7 @@ var Store;
 var mongoose;
 Store = require('../model/store-schema'); 
 mongoose = require('mongoose');
-var encryption = require('encryption-module');
+var jbs_crypto = require('jbs-crypto');
 
 
 function start(request, response) {
@@ -11,7 +11,7 @@ function start(request, response) {
 	
 	// Make sure db connection is good
 	var db = mongoose.connection;
-	db.on('error', console.error.bind(console, 'Connection error:'));	
+	db.on('error', console.error.bind(console, 'Connection error:'));
 	db.once('open', function (callback) {
 		console.log('Database opened');
 	});
@@ -26,36 +26,40 @@ function start(request, response) {
         console.log(str);
         
         // Decrypt data
-        encryption.decrypt(str, function(error, decrypted) {
+        jbs_crypto.decrypt(str, function(error, decrypted) {
             
             if (error) console.log(error);
             
             else {
-                // Turn decrypted back into JSON object
-                var decrypt = JSON.parse(decrypted);
+                // Turn decrypted string back into JSON object
+                var decJson = JSON.parse(decrypted);
                 
                 // JSON.parse(string); --> string to JSON
                 // JSON.stringify(obj); --> JSON to string
                 //var newstr = JSON.parse(str);				
                 
                 // Verify correct POST data for access to server
-                if (decrypt.Username === 'Brad' && decrypt.Password === '12345') {			
+                if (decJson.Username === 'Brad' && decJson.Password === '12345') {			
                     
-                    // DO SECRET STUFF WITH CLIENT POST HERE 
-                    if (decrypt.method === 'POST')
-                        Post(decrypt.restOfContent, response);
-                    else if (decrypt.method === 'GET')
+                    // Route program to appropriate method function (GET, PUT, POST, DELETE)
+
+                    if (decJson.method === 'POST')
+                        Post(decJson.restOfContent, response);
+
+                    else if (decJson.method === 'GET')
                         Get(response);
-                    else if (decrypt.method === 'DELETE')
-                        Delete(decrypt.restOfContent, response);
-                    else if (decrypt.method === 'PUT')
-                        Update(decrypt.restOfContent, response);
+
+                    else if (decJson.method === 'DELETE')
+                        Delete(decJson.restOfContent, response);
+
+                    else if (decJson.method === 'PUT')
+                        Update(decJson.restOfContent, response);
                     
                 } else {
                     // If tier1 auth was correct but username/password wrong
                     displayErrorMessage(response);
-                }   
-            }            
+                } 
+            }
         });
 	});		
 }
@@ -65,73 +69,91 @@ function Post(otherContent, response) {
     
 	console.log('In POST');
 	response.writeHead(200, {'Content-Type': 'text/plan'});
-    
-    // Decrypt otherContent and turn into JSON object
-    encryption.decrypt(otherContent, function(error, decrypted) {
         
-        decrypted = JSON.parse(decrypted);
+    // Query the db to see if the item exists already
+    Store.findOne({ 'name': (otherContent.name).toLowerCase() }, function (err, pass) {
         
-        // Query the db to see if the item exists already
-        Store.findOne({ 'name': (decrypted.name).toLowerCase() }, function (err, pass) {
+        if (err) console.log('ERROR:' + err);
+        
+        // If a document exists in db with name, check to see if username
+        // already exists in that document
+        if (pass) {
+                        
+            var exists = false;			
+            for (var i = 0; i < pass.accounts.length; i++) {
+                if (pass.accounts[i].username === otherContent.username)
+                    exists = true;
+            }
             
-            if (err) console.log('ERROR:' + err);
-            
-            // If a document exists in db with name, check to see if username
-            // already exists in that document
-            if (pass) {
-                            
-                var exists = false;			
-                for (var i = 0; i < pass.accounts.length; i++) {
-                    if (pass.accounts[i].username === decrypted.username)
-                        exists = true;
-                }
+            if (exists) {
+
+                console.log('Account Already Exists');
+                var str = 'Username Already Exists for Account ' + pass.userSpelledName;
                 
-                if (exists) {
-                    console.log('Account Already Exists');
-                    response.write('\nUsername Already Exists');
-                    response.end();
-                    mongoose.connection.close();
-                } else {
-                    // Add the new account credentials to the existing account name
-                    addToExistingPass(pass, decrypted, response);				
-                }
-            }		 
-            
-            // If the password does not already exist add it to the db
-            else {			
-                saveNewPost(decrypted, response);			
-            }	
-        });
+                jbs_crypto.encrypt(str, function(err, encrypted) {
+
+                	if (err) console.log(err);
+
+                	else {
+                		response.write(encrypted);
+		                response.end();
+                	}	                	
+                });
+	                
+                mongoose.connection.close();
+            } else {
+                // Add the new account credentials to the existing account name
+                addToExistingPass(pass, otherContent, response);				
+            }
+        }		 
+        
+        // If the password does not already exist add it to the db
+        else {			
+            saveNewPost(otherContent, response);			
+        }	
     });
 }
 
 function addToExistingPass(pass, otherContent, response) {
 	
-	Store.findById(pass._id, function (err, passs) {
+	Store.findById(pass._id, function (err, pass_obj) {
 		
 		if (err) console.log('Lookup Error: ' + err);
-		
-		passs.accounts.push({
-			username: otherContent.username,
-			password: otherContent.password
-		});
-		
-		passs.save( function (err) {
-			if (err) console.log('Save Error: ' + err);
+
+		else {
+
+			pass_obj.accounts.push({
+				username: otherContent.username,
+				password: otherContent.password
+			});
 			
-			else {
-				console.log('Saved Successfully');
-				response.write('New username ' + otherContent.username + ' added to existing account ' + passs.name);
-				response.end();
-				mongoose.connection.close();
-			}			
-		});		
+			pass_obj.save( function (err) {
+				if (err) console.log('Save Error: ' + err);
+				
+				else {
+					console.log('Saved Successfully');
+					var str = 'New username ' + otherContent.username + ' added to existing account ' + pass_obj.name;
+
+					jbs_crypto.encrypt(str, function(err, encrypted) {
+						if (err) console.log(err);
+
+	                	else {
+	                		response.write(encrypted);
+			                response.end();
+	                	}	
+					});
+					mongoose.connection.close();
+				}			
+			});		
+		}
 	});
 }
 
 function saveNewPost(otherContent, response) {
 	
+	// Create new document for database, new account being created
 	var store = new Store();
+
 	store.name = (otherContent.name).toLowerCase();
 	store.userSpelledName = otherContent.name;
 	store.accounts.push({
@@ -144,8 +166,16 @@ function saveNewPost(otherContent, response) {
 		
 		else {
 			console.log('Saved Successfully');
-			response.write('Successfully saved: \n' + store);
-			response.end();				
+			var str = 'Successfully saved: ' + JSON.stringify(store);
+
+			jbs_crypto.encrypt(str, function(err, encrypted) {
+				if (err) console.log(err);
+
+            	else {
+            		response.write(encrypted);
+	                response.end();
+            	}	
+			});
 			mongoose.connection.close();
 		}		
 	});
@@ -156,29 +186,33 @@ function Get(response) {
 	
 	// Find all passwords and return to client
 	Store.find().lean().exec( function (err, pass) {
-        
-        // Encrypt data before sending
-        encryption.encrypt(pass, function(error, encrypted) {
-            
-            // Print error to console and close mongoose connection
-            if (error) {
-                console.log(error);
-                mongoose.connection.close();
-            }
-            
-            // Send encrypted data to client
-            else {
-                response.writeHead(200, {"Content-Type": "application/json"});
-                //response.write(JSON.stringify(pass, null, 4));
-                response.write(encrypted);
-                response.end();
-                
-                //console.log('Returned:\n' + JSON.stringify(pass, null, 4));
-                console.log('Returned:\n' + encrypted);
-                
-                mongoose.connection.close();
-            }
-        });
+
+		if (err) console.log(err);
+
+		else {
+			// Encrypt data before sending
+	        jbs_crypto.encrypt(pass, function(error, encrypted) {
+	            
+	            // Print error to console and close mongoose connection
+	            if (error) {
+	                console.log(error);
+	                mongoose.connection.close();
+	            }
+	            
+	            // Send encrypted data to client
+	            else {
+	                response.writeHead(200, {"Content-Type": "text/plain"});
+	                //response.write(JSON.stringify(pass, null, 4));
+	                response.write(encrypted);
+	                response.end();
+	                
+	                //console.log('Returned:\n' + JSON.stringify(pass, null, 4));
+	                console.log('Returned:\n' + encrypted);
+	                
+	                mongoose.connection.close();
+	            }
+	        });
+		} 
 	});	
 }
 

@@ -1,6 +1,6 @@
 // Node.js modules
 var http = require("http");
-var encryption = require('encryption-module');
+var jbs_crypto = require('jbs-crypto');
 
 
 // http request options for POST
@@ -24,17 +24,17 @@ var req = http.request(options, function(response) {
 	var str = '';
 	response.on('data', function(chunk) {
 		str += chunk;
-	});	
+	});
     
 	response.on('end', function() {
 		console.log('Encrypted ==>\n' + str);
         
         // Decrypt data
-        encryption.decrypt(str, function(error, decrypted) {
+        jbs_crypto.decrypt(str, function(error, decrypted) {
             if (error) console.log(error);
             
             else {
-                console.log('\nDecrypted ==>\n' + decrypted);
+                console.log('\nDecrypted ==>\n' + JSON.stringify((JSON.parse(decrypted)), null, 4));
             }
         });
 	});
@@ -49,7 +49,7 @@ var secretMessage = {
 };
 
 // Encrypt secretMessage for transportation
-encryption.encrypt(secretMessage, function(err, encrypted) {
+jbs_crypto.encrypt(secretMessage, function(err, encrypted) {
     
     if (err) console.log(err);
     
