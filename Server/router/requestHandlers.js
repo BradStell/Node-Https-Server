@@ -88,7 +88,7 @@ function Post(otherContent, response) {
             if (exists) {
 
                 console.log('Account Already Exists');
-                var str = 'Username Already Exists for Account ' + pass.userSpelledName;
+                var str = 'Username ' + otherContent.username + ' Already Exists for Account ' + pass.userSpelledName;
                 
                 jbs_crypto.encrypt(str, function(err, encrypted) {
 
@@ -166,7 +166,7 @@ function saveNewPost(otherContent, response) {
 		
 		else {
 			console.log('Saved Successfully');
-			var str = 'Successfully saved: ' + JSON.stringify(store);
+			var str = 'Created account ' + otherContent.name + ' with username ' + otherContent.username;
 
 			jbs_crypto.encrypt(str, function(err, encrypted) {
 				if (err) console.log(err);
@@ -221,39 +221,93 @@ function Delete(otherContent, response) {
 	
 	// Remove account from document
 	if (otherContent.whatToDelete === 'account') {
-		
-		Store.update( { 'name': otherContent.name }, { $pull: 
-			{ 'accounts': { 'username': otherContent.which }
-		}},
-		function (err) {
-			if (err) console.log(err);
-			
-			else {
-				response.write('Removed account ' + otherContent.which);
-				response.end();
-				
-				mongoose.connection.close();
-				
-				console.log('Removed account ' + otherContent.which);
-			}			
+
+		Store.findOne({ 'name': (otherContent.name).toLowerCase() }, function (err, pass) {
+
+			if (err) console.log('ERROR:' + err);
+        
+	        // If a document exists in db with name, check to see if username
+	        // exists in that document
+	        if (pass) {
+	                        
+	            var exists = false;
+	            var where = -1;
+
+	            for (var i = 0; i < pass.accounts.length; i++) {
+	                if (pass.accounts[i].username === otherContent.username) {	                	
+	                    exists = true;
+	                    where = i;
+	                    break;
+	                }
+	            }
+	            
+	            // If username does exist, delete it
+	            if (exists) {
+
+	            	console.log('Removed ' + JSON.stringify((pass.accounts.splice(where, 1))) );
+
+	            	pass.save(function(err) {
+	            		if (err) console.log(err);
+
+	            		else {
+	            			console.log('Updated Successfully');
+	            			response.write('Removed user account ' + otherContent.username + ' from account ' + otherContent.name);
+			                response.end();		                
+			                mongoose.connection.close();
+	            		}	            			
+	            	});
+	            } 
+
+	            // If username does not exist, inform user
+	            else {
+	                // Report error, username not in this document
+	                response.write('Username ' + otherContent.which + ' does not exist in account ' + otherContent.name);
+	                response.end();
+	                mongoose.connection.close();		
+	            }
+	        }		 
+	        
+	        // If the password does not already exist add it to the db
+	        else {			
+	            // Report error, no document with name otherContent.name
+	            response.write('No document with ' + otherContent.name);
+	            response.end();	
+	        }	
 		});
 	}
 	
 	// Remove whoel document from db
 	else if (otherContent.whatToDelete === 'document') {
 		
-		Store.remove( { 'name': otherContent.name }, function(err) {
+		Store.remove( { 'name': (otherContent.name).toLowerCase() }, function(err, removed) {
 			if (err) console.log(err);
 			
 			else {
-				response.write('Document Deleted');
-				response.end();
-				
-				console.log('Document Deleted');
-				
-				mongoose.connection.close();				
+				if (removed.result.n == 0) {
+					console.log('Something wrong, no document removed');
+					response.write('No documents removed');
+				} else {
+					console.log('Removed document ' + otherContent.name);
+					response.write('Removed document ' + otherContent.name);
+				}				
+				response.end();				
+				mongoose.connection.close();
 			}			
 		});
+	}
+
+	// If server was called incorrectly
+	else {
+
+		var str = 'You must specify an "account" or a "document" for removal in the "whatToDelete" field';
+		console.log(str);
+
+		jbs_crypto.encrypt(str, function(err, encrypted) {
+			response.write(encrypted);
+			response.end();
+		});		
+		
+		mongoose.connection.close();
 	}
 }
 

@@ -1,5 +1,6 @@
 // Node.js modules
 var http = require("http");
+var jbs_crypto = require('jbs-crypto');
 
 
 // http request options for POST
@@ -16,7 +17,7 @@ var options = {
 };
 
 // Make the http request with the above POST options
-var req = http.request(function(response) {
+var req = http.request(options, function(response) {
 	
 	// Capture the response sent back from the server
 	// with the response event emitters
@@ -26,7 +27,9 @@ var req = http.request(function(response) {
 	});
 	
 	response.on('end', function() {
-		console.log(str);
+		jbs_crypto.decrypt(str, function(err, decrypted) {
+			console.log(decrypted);
+		});
 	});
 });
 
@@ -37,12 +40,19 @@ var secretMessage = {
 	"Password" : "12345",
 	"method" : "DELETE",
 	"restOfContent" : {
-		"name" : "github",
-		"whatToDelete": "document", // account, or document
-		"which": "Account1" // which account name (Ignored if deleting whole document)
+		"name" : "NEWEST",
+		"whatToDelete": "adsf", // account, or document
+		"username": "Bookers" // which account name (Ignored if deleting whole document)
 	}
 };
 
-// Write the secret password in the POST data
-req.write(JSON.stringify(secretMessage));
-req.end();
+jbs_crypto.encrypt(secretMessage, function(err, encrypted) {
+
+	if (err) console.log(err);
+
+	else {
+		// Write the secret password in the POST data
+		req.write(encrypted);
+		req.end();
+	}
+});
