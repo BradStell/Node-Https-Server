@@ -2,34 +2,34 @@
 ## Server ##
 
 Server/data
-Server/node_modules
+Server/node_modules/mongoose
 
 #####################
 ## For Android App ##
 
-*.iml
-.gradle
-local.properties
+Android/PassApp/*.iml
+Android/PassApp/.gradle
+Android/PassApp/local.properties
 #.idea/workspace.xml
 #.idea/libraries
-.idea
-.DS_Store
-build
-captures
+Android/PassApp/.idea
+Android/PassApp/.DS_Store
+Android/PassApp/build
+Android/PassApp/captures
 
 #built application files
-*.apk
-*.ap_
+Android/PassApp/*.apk
+Android/PassApp/*.ap_
 
 # files for the dex VM
-*.dex
+Android/PassApp/*.dex
 
 # Java class files
-*.class
+Android/PassApp/*.class
 
 # generated files
-bin/
-gen/
+Android/PassApp/bin/
+Android/PassApp/gen/
 
 # Windows thumbnail db
-Thumbs.db
+Android/Thumbs.db
