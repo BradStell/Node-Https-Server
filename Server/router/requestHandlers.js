@@ -1,12 +1,18 @@
-var Store;
-var mongoose;
-Store = require('../model/store-schema'); 
-mongoose = require('mongoose');
-var jbs_crypto = require('jbs-crypto');
+// Module Imports
+var Store = require('../model/store-schema'); 	// mongodb/mongoose schema
+var mongoose = require('mongoose');				// mongoose module
+var jbs_crypto = require('jbs-crypto');			// encryption module
 
 
+/**
+ *	Function reachable from outside code that requests this module.
+ *	 - opens mongodb connection to database 'UserCache'
+ *	 - decrypts response from client
+ *	 - routes request to appropriate crud method
+ */
 function start(request, response) {
 	
+	// Open mongodb connection to 'UserCache' database
 	mongoose.connect('mongodb://127.0.0.1/UserCache');
 	
 	// Make sure db connection is good
@@ -17,12 +23,17 @@ function start(request, response) {
 	});
 	
 	//Capture POST data sent from client with request emitters
-	var str = '';		
+	var str = '';
+
+	// concatenate incoming data from request
 	request.on('data', function(chunk) {
 		str += chunk;
 	});
 	
+	// all data has been recieved from client
 	request.on('end', function() {
+
+		// Show enctypted output to console
         console.log(str);
         
         // Decrypt data
@@ -32,28 +43,24 @@ function start(request, response) {
             
             else {
                 // Turn decrypted string back into JSON object
-                var decJson = JSON.parse(decrypted);
-                
-                // JSON.parse(string); --> string to JSON
-                // JSON.stringify(obj); --> JSON to string
-                //var newstr = JSON.parse(str);				
-                
+                var data = JSON.parse(decrypted);
+
                 // Verify correct POST data for access to server
-                if (decJson.Username === 'Brad' && decJson.Password === '12345') {			
+                if (data.Username === 'Brad' && data.Password === '12345') {			
                     
                     // Route program to appropriate method function (GET, PUT, POST, DELETE)
 
-                    if (decJson.method === 'POST')
-                        Post(decJson.restOfContent, response);
+                    if (data.method === 'POST')
+                        Post(data.restOfContent, response);
 
-                    else if (decJson.method === 'GET')
+                    else if (data.method === 'GET')
                         Get(response);
 
-                    else if (decJson.method === 'DELETE')
-                        Delete(decJson.restOfContent, response);
+                    else if (data.method === 'DELETE')
+                        Delete(data.restOfContent, response);
 
-                    else if (decJson.method === 'PUT')
-                        Update(decJson.restOfContent, response);
+                    else if (data.method === 'PUT')
+                        Update(data.restOfContent, response);
                     
                 } else {
                     // If tier1 auth was correct but username/password wrong
@@ -65,31 +72,38 @@ function start(request, response) {
 }
 
 
+/**
+ *	CRUD operation Create
+ *	 - Will create new entity with account
+ *	 - Will create new account with existing entity
+ */
 function Post(otherContent, response) {
     
 	console.log('In POST');
 	response.writeHead(200, {'Content-Type': 'text/plan'});
         
-    // Query the db to see if the item exists already
+    // Query the db to see if the entity exists or not
     Store.findOne({ 'name': (otherContent.name).toLowerCase() }, function (err, pass) {
         
-        if (err) console.log('ERROR:' + err);
+        if (err) console.log(err);
         
-        // If a document exists in db with name, check to see if username
-        // already exists in that document
+        // There already exists a document (entity) with the name
         if (pass) {
                         
+            // Check the account name and see if it already exists or not
             var exists = false;			
             for (var i = 0; i < pass.accounts.length; i++) {
                 if (pass.accounts[i].username === otherContent.username)
                     exists = true;
             }
             
+            // Tell user the account in the entity already exists
             if (exists) {
-
-                console.log('Account Already Exists');
-                var str = 'Username ' + otherContent.username + ' Already Exists for Account ' + pass.userSpelledName;
                 
+                var str = 'Username ' + otherContent.username + ' Already Exists for Account ' + pass.userSpelledName;
+                console.log(str);
+
+                // Encrypt the response back to the client                
                 jbs_crypto.encrypt(str, function(err, encrypted) {
 
                 	if (err) console.log(err);
@@ -101,59 +115,63 @@ function Post(otherContent, response) {
                 });
 	                
                 mongoose.connection.close();
-            } else {
-                // Add the new account credentials to the existing account name
+            } 
+
+            // Add the new account credentials to the existing entity name
+            else {                
                 addToExistingPass(pass, otherContent, response);				
             }
         }		 
         
-        // If the password does not already exist add it to the db
+        // If the entity does not already exist, create a new entry
         else {			
             saveNewPost(otherContent, response);			
         }	
     });
 }
 
+/**
+ *	Adds new account to existing entity
+ */
 function addToExistingPass(pass, otherContent, response) {
-	
-	Store.findById(pass._id, function (err, pass_obj) {
-		
-		if (err) console.log('Lookup Error: ' + err);
 
-		else {
-
-			pass_obj.accounts.push({
-				username: otherContent.username,
-				password: otherContent.password
-			});
-			
-			pass_obj.save( function (err) {
-				if (err) console.log('Save Error: ' + err);
-				
-				else {
-					console.log('Saved Successfully');
-					var str = 'New username ' + otherContent.username + ' added to existing account ' + pass_obj.name;
-
-					jbs_crypto.encrypt(str, function(err, encrypted) {
-						if (err) console.log(err);
-
-	                	else {
-	                		response.write(encrypted);
-			                response.end();
-	                	}	
-					});
-					mongoose.connection.close();
-				}			
-			});		
-		}
+	// Add another account object to the accounts array
+	pass.accounts.push({
+		username: otherContent.username,
+		password: otherContent.password
 	});
+	
+	// Save the document back to the database
+	pass.save( function (err) {
+		if (err) console.log('Save Error: ' + err);
+		
+		else {			
+			var str = 'New username ' + otherContent.username + ' added to existing account ' + pass.name;
+			console.log(str);
+
+			// Encrypt the response back to the client
+			jbs_crypto.encrypt(str, function(err, encrypted) {
+				if (err) console.log(err);
+
+            	else {
+            		response.write(encrypted);
+	                response.end();
+            	}	
+			});
+			mongoose.connection.close();
+		}			
+	});	
 }
 
+/**
+ *	Adds new entity (document) to the db
+ */
 function saveNewPost(otherContent, response) {
 	
 	// Create new document for database, new account being created
 	var store = new Store();
 
+	// Fill in the fields with the entity details
 	store.name = (otherContent.name).toLowerCase();
 	store.userSpelledName = otherContent.name;
 	store.accounts.push({
@@ -161,13 +179,15 @@ function saveNewPost(otherContent, response) {
 		password: otherContent.password
 	});
 	
+	// Save to the database
 	store.save(function (err) {
 		if (err) console.log('Save Error: ' + err);
 		
-		else {
-			console.log('Saved Successfully');
+		else {			
 			var str = 'Created account ' + otherContent.name + ' with username ' + otherContent.username;
+			console.log(str);
 
+			// Encrypt response back to client
 			jbs_crypto.encrypt(str, function(err, encrypted) {
 				if (err) console.log(err);
 
@@ -181,6 +201,10 @@ function saveNewPost(otherContent, response) {
 	});
 }
 
+/**
+ *	CRUD operaction Read
+ *	 - Returns all documents in database
+ */
 function Get(response) {
 	console.log('In GET');
 	
@@ -193,46 +217,46 @@ function Get(response) {
 			// Encrypt data before sending
 	        jbs_crypto.encrypt(pass, function(error, encrypted) {
 	            
-	            // Print error to console and close mongoose connection
-	            if (error) {
-	                console.log(error);
-	                mongoose.connection.close();
-	            }
+	            // Print error to console
+	            if (error) console.log(error);
 	            
 	            // Send encrypted data to client
 	            else {
 	                response.writeHead(200, {"Content-Type": "text/plain"});
-	                //response.write(JSON.stringify(pass, null, 4));
 	                response.write(encrypted);
 	                response.end();
 	                
-	                //console.log('Returned:\n' + JSON.stringify(pass, null, 4));
 	                console.log('Returned:\n' + encrypted);
-	                
-	                mongoose.connection.close();
 	            }
+	            mongoose.connection.close();
 	        });
 		} 
 	});	
 }
 
+/**
+ *	CRUD operation Delete
+ *	 - Deletes account from existing entity
+ *	 - Removes entire entity (document)
+ */
 function Delete(otherContent, response) {
 	console.log('in DELETE');
 	
 	// Remove account from document
 	if (otherContent.whatToDelete === 'account') {
 
+		// Find the document (entity) with the specified name
 		Store.findOne({ 'name': (otherContent.name).toLowerCase() }, function (err, pass) {
 
 			if (err) console.log('ERROR:' + err);
         
-	        // If a document exists in db with name, check to see if username
-	        // exists in that document
+	       // If document does exist, check to see if account exists
 	        if (pass) {
 	                        
 	            var exists = false;
-	            var where = -1;
+	            var where = -1;		// Spot in array where account exists
 
+	            // Locate account in accounts array
 	            for (var i = 0; i < pass.accounts.length; i++) {
 	                if (pass.accounts[i].username === otherContent.username) {	                	
 	                    exists = true;
@@ -241,7 +265,7 @@ function Delete(otherContent, response) {
 	                }
 	            }
 	            
-	            // If username does exist, delete it
+	            // If account with username does exist, delete it
 	            if (exists) {
 
 	            	console.log('Removed ' + JSON.stringify((pass.accounts.splice(where, 1))) );
@@ -267,12 +291,11 @@ function Delete(otherContent, response) {
 	            }
 	        }		 
 	        
-	        // If the password does not already exist add it to the db
-	        else {			
-	            // Report error, no document with name otherContent.name
+	        // IF document does not exist, inform user
+	        else {				            
 	            response.write('No document with ' + otherContent.name);
 	            response.end();	
-	        }	
+	        }
 		});
 	}
 	
@@ -311,6 +334,12 @@ function Delete(otherContent, response) {
 	}
 }
 
+
+/**
+ *	CRUD operation Update
+ *	 - Change password
+ *	 - Change account username (rare)
+ */
 function Update(otherContent, response) {
 	console.log('In PUT');
 	var str = '';

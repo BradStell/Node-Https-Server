@@ -42,7 +42,7 @@ var secretMessage = {
 	"Password" : "12345",
 	"method" : "POST",
 	"restOfContent" : {
-		"name" : "Cisco",
+		"name" : "AOC",
 		"username" : "Bookers",
 		"password" : "passssss"
 	}
