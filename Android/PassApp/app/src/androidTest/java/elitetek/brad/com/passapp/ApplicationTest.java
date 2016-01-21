@@ -1,4 +1,4 @@
-package com.passapp.brad.passapp;
+package elitetek.brad.com.passapp;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

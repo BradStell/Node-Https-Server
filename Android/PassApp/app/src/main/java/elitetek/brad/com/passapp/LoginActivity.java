@@ -1,4 +1,4 @@
-package com.passapp.brad.passapp;
+package elitetek.brad.com.passapp;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -30,30 +30,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -79,13 +57,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      */
     private UserLoginTask mAuthTask = null;
 
-    // Http methods
-    private enum Method {
-        GET, POST, PUT, DELETE;
-    }
-
     // UI references.
-    private AutoCompleteTextView mUsrnameView;
+    private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
@@ -95,16 +68,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         // Set up the login form.
-        mUsrnameView = (AutoCompleteTextView) findViewById(R.id.username);
-        populateAutoComplete();
-
-        Log.d("test", "here");
+        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
 
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                Log.d("test", "id=" + id + " R.id.login=" + R.id.login + " EditorInfo.IME_NULL=" + EditorInfo.IME_NULL);
                 if (id == R.id.login || id == EditorInfo.IME_NULL) {
                     attemptLogin();
                     return true;
@@ -125,50 +94,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mProgressView = findViewById(R.id.login_progress);
     }
 
-    private void populateAutoComplete() {
-        if (!mayRequestContacts()) {
-            return;
-        }
-
-        getLoaderManager().initLoader(0, null, this);
-    }
-
-    private boolean mayRequestContacts() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            return true;
-        }
-        if (checkSelfPermission(READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
-            return true;
-        }
-        if (shouldShowRequestPermissionRationale(READ_CONTACTS)) {
-            Snackbar.make(mUsrnameView, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
-                    .setAction(android.R.string.ok, new View.OnClickListener() {
-                        @Override
-                        @TargetApi(Build.VERSION_CODES.M)
-                        public void onClick(View v) {
-                            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
-                        }
-                    });
-        } else {
-            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
-        }
-        return false;
-    }
-
-    /**
-     * Callback received when a permissions request has been completed.
-     */
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_READ_CONTACTS) {
-            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                populateAutoComplete();
-            }
-        }
-    }
-
-
     /**
      * Attempts to sign in or register the account specified by the login form.
      * If there are form errors (invalid email, missing fields, etc.), the
@@ -180,11 +105,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
 
         // Reset errors.
-        mUsrnameView.setError(null);
+        mEmailView.setError(null);
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        String username = mUsrnameView.getText().toString();
+        String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
@@ -197,14 +122,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             cancel = true;
         }
 
-        // Check for a valid username address.
-        if (TextUtils.isEmpty(username)) {
-            mUsrnameView.setError(getString(R.string.error_field_required));
-            focusView = mUsrnameView;
+        // Check for a valid email address.
+        if (TextUtils.isEmpty(email)) {
+            mEmailView.setError(getString(R.string.error_field_required));
+            focusView = mEmailView;
             cancel = true;
-        } else if (!isUsernameValid(username)) {
-            mUsrnameView.setError(getString(R.string.error_invalid_usrname));
-            focusView = mUsrnameView;
+        } else if (!isEmailValid(email)) {
+            mEmailView.setError(getString(R.string.error_invalid_email));
+            focusView = mEmailView;
             cancel = true;
         }
 
@@ -216,14 +141,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(username, password);
+            mAuthTask = new UserLoginTask(email, password);
             mAuthTask.execute((Void) null);
         }
     }
 
-    private boolean isUsernameValid(String usrname) {
+    private boolean isEmailValid(String email) {
         //TODO: Replace this with your own logic
-        return usrname.length() > 3;
+        return email.contains("@");
     }
 
     private boolean isPasswordValid(String password) {
@@ -307,7 +232,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 new ArrayAdapter<>(LoginActivity.this,
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
 
-        mUsrnameView.setAdapter(adapter);
+        mEmailView.setAdapter(adapter);
     }
 
 
@@ -327,67 +252,30 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      */
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
-        private final String mUsername;
+        private final String mEmail;
         private final String mPassword;
-        private JSONObject mHeader;
-        private JSONObject mBody;
 
         UserLoginTask(String email, String password) {
-            mUsername = email;
+            mEmail = email;
             mPassword = password;
-            mHeader = buildHeader();
-            mBody = buildBody();
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
 
-            BufferedReader reader = null;
             try {
+                // Simulate network access.
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                return false;
+            }
 
-                URL url = new URL("https", "10.0.2.2", 3000, "/");
-                HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-
-                // add request header
-                connection.setRequestMethod(Method.POST.name());
-                connection.setRequestProperty("tier1", "45r97diIj3099KpqnzlapEIv810nZaaS0");
-                connection.setRequestProperty("Content-Type", "application/json");
-
-                connection.setDoOutput(true);
-                //connection.setDoInput(true);
-
-                DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
-                dos.writeBytes(mBody.toString());
-                dos.flush();
-                dos.close();
-
-                StringBuilder sb = new StringBuilder();
-
-
-                reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-
-                String line = "";
-
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line).append("\n");
-                }
-                reader.close();
-
-                Log.d("http", sb.toString());
-
-
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    if (reader != null) {
-                        reader.close();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
+            for (String credential : DUMMY_CREDENTIALS) {
+                String[] pieces = credential.split(":");
+                if (pieces[0].equals(mEmail)) {
+                    // Account exists, return true if the password matches.
+                    return pieces[1].equals(mPassword);
                 }
             }
 
@@ -399,8 +287,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
             showProgress(false);
-
+            Log.d("login", success + "");
             if (success) {
+
                 finish();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
@@ -413,28 +302,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask = null;
             showProgress(false);
         }
-
-        private JSONObject buildHeader() {
-            try {
-                return new JSONObject() {{
-                    put("tier1", "45r97diIj3099KpqnzlapEIv810nZaaS0");
-                    put("Content-Type", "application/json");
-                }};
-            } catch (JSONException je) {
-                return null;
-            }
-        }
-
-        private JSONObject buildBody() {
-            try {
-                return new JSONObject() {{
-                    put("Username", mUsername);
-                    put("Password", mPassword);
-                    put("method", Method.GET.name());
-                }};
-            } catch (JSONException je) {
-                return null;
-            }
-        }
     }
 }
+

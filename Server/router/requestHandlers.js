@@ -274,9 +274,18 @@ function Delete(otherContent, response) {
 	            		if (err) console.log(err);
 
 	            		else {
-	            			console.log('Updated Successfully');
-	            			response.write('Removed user account ' + otherContent.username + ' from account ' + otherContent.name);
-			                response.end();		                
+	            			var str = 'Removed user account ' + otherContent.username + ' from account ' + otherContent.name;
+	            			console.log(str);
+
+	            			jbs_crypto.encrypt(str, function(err, encrypted) {
+	            				if (err) console.log(err);
+
+	            				else {
+	            					response.write(encrypted);
+					                response.end();
+	            				}		            				
+	            			});
+		            			
 			                mongoose.connection.close();
 	            		}	            			
 	            	});
@@ -284,17 +293,37 @@ function Delete(otherContent, response) {
 
 	            // If username does not exist, inform user
 	            else {
-	                // Report error, username not in this document
-	                response.write('Username ' + otherContent.which + ' does not exist in account ' + otherContent.name);
-	                response.end();
-	                mongoose.connection.close();		
+	            	var str = 'Username ' + otherContent.which + ' does not exist in account ' + otherContent.name;
+	            	console.log(str);
+
+	            	jbs_crypto.encrypt(str, function(err, encrypted) {
+        				if (err) console.log(err);
+
+        				else {
+        					response.write(encrypted);
+			                response.end();
+        				}		            				
+        			});
+
+	                mongoose.connection.close();
 	            }
 	        }		 
 	        
 	        // IF document does not exist, inform user
-	        else {				            
-	            response.write('No document with ' + otherContent.name);
-	            response.end();	
+	        else {
+	        	var str = 'No document with ' + otherContent.name;
+            	console.log(str);
+
+            	jbs_crypto.encrypt(str, function(err, encrypted) {
+    				if (err) console.log(err);
+
+    				else {
+    					response.write(encrypted);
+		                response.end();
+    				}		            				
+    			});
+    			
+                mongoose.connection.close();	
 	        }
 		});
 	}
@@ -306,14 +335,23 @@ function Delete(otherContent, response) {
 			if (err) console.log(err);
 			
 			else {
+				var str = '';
+
 				if (removed.result.n == 0) {
-					console.log('Something wrong, no document removed');
-					response.write('No documents removed');
+					str = 'Something wrong, no document removed';
 				} else {
-					console.log('Removed document ' + otherContent.name);
-					response.write('Removed document ' + otherContent.name);
-				}				
-				response.end();				
+					str = 'Removed document ' + otherContent.name;
+				}
+
+				jbs_crypto.encrypt(str, function(err, encrypted) {
+					if (err) console.log(err);
+
+					else {
+						response.write(encrypted);
+						response.end();
+					}
+				});
+				
 				mongoose.connection.close();
 			}			
 		});
@@ -326,8 +364,12 @@ function Delete(otherContent, response) {
 		console.log(str);
 
 		jbs_crypto.encrypt(str, function(err, encrypted) {
-			response.write(encrypted);
-			response.end();
+			if (err) console.log(err);
+
+			else {
+				response.write(encrypted);
+				response.end();	
+			}			
 		});		
 		
 		mongoose.connection.close();
@@ -365,8 +407,16 @@ function Update(otherContent, response) {
 				}
 
 				console.log(str);
-				response.write(str);
-				response.end();
+
+				jbs_crypto.encrypt(str, function(err, encrypted) {
+					if (err) console.log(err);
+
+					else {
+						response.write(encrypted);
+						response.end();
+					}						
+				});
+					
 				mongoose.connection.close();
 			});
 	} 
@@ -390,27 +440,44 @@ function Update(otherContent, response) {
 				}
 
 				console.log(str);
-				response.write(str);
-				response.end();
+
+				jbs_crypto.encrypt(str, function(err, encrypted) {
+					if (err) console.log(err);
+
+					else {
+						response.write(encrypted);
+						response.end();
+					}
+				});
+						
 				mongoose.connection.close();
-			});
+		});
 	}
 
 	else {
 		str = 'You must specify either an "account" or "username" to change';
 
 		console.log(str);
-		response.write(str);
-		response.end();
+
+		jbs_crypto.encrypt(str, function(err, encrypted) {
+			if (err) console.log(err);
+
+			else {
+				response.write(encrypted);
+				response.end();
+			}
+		});
+
 		mongoose.connection.close();
 	}
 }
 
 function displayErrorMessage(response) {
 	response.writeHead(404, {"Content-Type": "text/plain"});
-	response.write("Denied boy");
+	response.write('404 page not found');
 	response.end();
 }
 
 
+// Export the start function as a module
 exports.start = start;

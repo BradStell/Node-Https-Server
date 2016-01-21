@@ -27,7 +27,14 @@ var req = http.request(options, function(response) {
 	});
 	
 	response.on('end', function() {
-		console.log(str);
+
+		jbs_crypto.decrypt(str, function(err, decrypted) {
+			if (err) console.log(err);
+
+			else {
+				console.log(decrypted);
+			}
+		});
 	});
 });
 
