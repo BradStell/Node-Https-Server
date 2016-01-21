@@ -313,40 +313,68 @@ function Delete(otherContent, response) {
 
 function Update(otherContent, response) {
 	console.log('In PUT');
+	var str = '';
 	
 	// Update the password
 	if (otherContent.toChange === 'password') {
-		Store.update({'name': otherContent.name, 'accounts.password': otherContent.old}, {'$set': {
-			'accounts.$.password': otherContent.new
-		}}, function (err) {
-			if (err) console.log(err); 
+
+		Store.update({'name': (otherContent.name).toLowerCase(), 'accounts.password': otherContent.old, 'accounts.username': otherContent.username},
+			{'$set': {'accounts.$.password': otherContent.new} },
+			function (err, resp) {
 			
-			else {
-				console.log('Password Changed to ' + otherContent.new);
-			
-				response.write('Password Changed to ' + otherContent.new);
+				if (err) console.log(err);
+				
+				else if (resp.nModified === 0) {
+
+					str = 'No change made. Make sure entity name, ' +
+						'old password, and account username are spelled correctly';
+
+				} else {
+
+					str = 'Entity ' + otherContent.name + ', account ' + otherContent.username + 
+						' password changed to ' + otherContent.new;
+				}
+
+				console.log(str);
+				response.write(str);
 				response.end();
 				mongoose.connection.close();
-			}			
-		});
+			});
 	} 
 	
 	// Update the username (probably not likely)
 	else if (otherContent.toChange === 'username') {
-		Store.update({'name': otherContent.name, 'accounts.username': otherContent.old}, {'$set': {
-			'accounts.$.username': otherContent.new
-		}}, function (err) {
-			if (err) console.log(err); 
-			
-			else {
-				console.log('Username Changed to ' + otherContent.new);
-			
-				response.write('Username Changed to ' + otherContent.new);
+
+		Store.update({'name': (otherContent.name).toLowerCase(), 'accounts.username': otherContent.username}, 
+			{'$set': {'accounts.$.username': otherContent.new}}, 
+			function (err, resp) {
+				if (err) console.log(err); 
+
+				else if (resp.nModified === 0) {
+
+					str = 'No change made. Make sure entity name and ' +
+						'account username are spelled correctly';
+
+				} else {
+					str = 'Entity ' + otherContent.name + ', account ' + otherContent.username + 
+						' changed to ' + otherContent.new;
+				}
+
+				console.log(str);
+				response.write(str);
 				response.end();
-				mongoose.connection.close();	
-			}			
-		});
-	}	
+				mongoose.connection.close();
+			});
+	}
+
+	else {
+		str = 'You must specify either an "account" or "username" to change';
+
+		console.log(str);
+		response.write(str);
+		response.end();
+		mongoose.connection.close();
+	}
 }
 
 function displayErrorMessage(response) {
