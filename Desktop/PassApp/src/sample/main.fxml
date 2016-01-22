@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.geometry.Insets?>
+<BorderPane stylesheets="@stylesheet.css" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="543.0" prefWidth="820.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+   <center>
+      <ScrollPane fx:id="mainScrollPane" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <content>
+            <AnchorPane fx:id="mainAnchorPane" prefHeight="445.0" prefWidth="818.0">
+               <children>
+                  <FlowPane fx:id="mainPane" layoutX="309.0" layoutY="123.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" >
+                     <padding>
+                        <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+                     </padding>
+                  </FlowPane>
+               </children>
+            </AnchorPane>
+         </content></ScrollPane>
+   </center>
+   <top>
+      <HBox alignment="CENTER" prefHeight="96.0" prefWidth="820.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label fx:id="mainTitle" id="mainTitle" text="Password Manager" />
+         </children>
+      </HBox>
+   </top>
+</BorderPane>

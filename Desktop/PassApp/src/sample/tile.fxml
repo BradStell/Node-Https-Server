@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+
+<StackPane fx:id="tile" id="tile" stylesheets="@stylesheet.css" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="286.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="190.0" prefWidth="277.0">
+         <children>
+            <HBox fx:id="tileBox" id="tileBox" alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Label fx:id="tileTitle" id="tileTitle" text="Gmail" />
+               </children>
+            </HBox>
+            <HBox prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <VBox alignment="CENTER_LEFT" prefHeight="97.0" prefWidth="85.0" spacing="10.0">
+                     <children>
+                        <Label text="Username:" />
+                        <Label text="Password:" />
+                     </children>
+                     <padding>
+                        <Insets left="20.0" />
+                     </padding>
+                  </VBox>
+                  <VBox alignment="CENTER_LEFT" prefHeight="97.0" prefWidth="189.0" spacing="10.0">
+                     <children>
+                        <Label fx:id="tileUsername" text="bradstell31@gmail.com" />
+                        <Label fx:id="tilePassword" text="Pa$$w0rD" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</StackPane>

@@ -1,0 +1,19 @@
+#tileTitle {
+    -fx-font-family: sans-serif;
+    -fx-font-size: 30;
+}
+
+#mainTitle {
+    -fx-font-family: sans-serif;
+    -fx-font-size: 30;
+}
+
+#tileBox {
+    -fx-border-color: black;
+    -fx-border-width: 2px;
+}
+
+#tile {
+    -fx-start-margin: 30px;
+    -fx-end-margin: 30px;
+}

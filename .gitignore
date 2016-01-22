@@ -1,11 +1,13 @@
-############
-## Server ##
+###############################################
+#################
+####### Server 
 
 Server/data
 Server/node_modules/mongoose
 
-#####################
-## For Android App ##
+##############################################
+#######################
+###### For Android App 
 
 Android/PassApp/*.iml
 Android/PassApp/.gradle
@@ -33,3 +35,11 @@ Android/PassApp/gen/
 
 # Windows thumbnail db
 Android/Thumbs.db
+
+#########################################################
+##############
+######    Desktop App
+
+Desktop/PassApp/.idea
+Desktop/PassApp/out
+Desktop/PassApp/PassApp.iml
