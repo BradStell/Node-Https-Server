@@ -1,18 +1,16 @@
-##############################################  
-################  
-##  Node-Http-Server  
+#  Node-Http-Server  
 
-### Install Node.js ###  
+### Install Node.js  
 You must install node.js  
 You can download it here: https://nodejs.org/en/  
 
-### Node Modules Needed ###  
+### Node Modules Needed  
 Open cmd.exe and navigate to the Server directory  
 Then type the below commands:  
 npm install mongodb  
 npm install mongoose  
 
-### Environment ###  
+### Environment   
 Need java 8 JDK installed, you can download it here http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html  
 Need to include java's bin folder in your path  
 	Instructions:  
@@ -34,7 +32,8 @@ Need to include java's bin folder in your path
 				then repeat the above directions again  
 			* If you get a list of how to use the java program then you have done it correctly  
 
-### Additional Info ### ( Already done for you now )  
+### Additional Info
+##### ( Already done for you now )  
 You need to make a 'data' directory in the root of your Server folder to contain the database information. This file  
 is created for you.  
 
