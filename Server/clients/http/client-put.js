@@ -45,11 +45,11 @@ var secretMessage = {
 	"Password" : "12345",
 	"method" : "PUT",
 	"restOfContent" : {
-		"name" : "NewEgg",	// Name of account to make changes to
-		"toChange" : "password", // or password,
-		"username": "NewUberNoob",
-		"old" : "smokIn",	// Needs to be username of account to change
-		"new" : "newPa$$" // or new password
+		"name" : "NewEgg",	// Name of source to make changes to
+		"toChange" : "password", // username or password, specify which to change
+		"username": "NewUberNoob",	// username of account to change
+		"old" : "smokIn",	// the old password or username to change
+		"new" : "newPa$$" // new username or password
 	}
 };
 

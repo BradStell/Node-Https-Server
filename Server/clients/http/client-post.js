@@ -42,9 +42,9 @@ var secretMessage = {
 	"Password" : "12345",
 	"method" : "POST",
 	"restOfContent" : {
-		"name" : "AOC",
-		"username" : "Bookers",
-		"password" : "passssss"
+		"name" : "Gmail",				// Name of source
+		"username" : "Bookers",			// account username
+		"password" : "passssss"			// account password
 	}
 };
 

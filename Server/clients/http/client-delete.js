@@ -41,7 +41,7 @@ var secretMessage = {
 	"method" : "DELETE",
 	"restOfContent" : {
 		"name" : "NEWEST",
-		"whatToDelete": "adsf", // account, or document
+		"whatToDelete": "account", // account, or document (account removes username/password pair from source; document removes entire source document)
 		"username": "Bookers" // which account name (Ignored if deleting whole document)
 	}
 };
