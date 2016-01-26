@@ -7,8 +7,8 @@ You can download it here: https://nodejs.org/en/
 ### Node Modules Needed  
 Open cmd.exe and navigate to the Server directory  
 Then type the below commands:  
-npm install mongodb  
-npm install mongoose  
+    npm install mongodb  
+    npm install mongoose  
 
 ### Environment   
 Need java 8 JDK installed, you can download it here http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html  
