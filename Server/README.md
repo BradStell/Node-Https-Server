@@ -14,8 +14,13 @@ Then type the below commands:
 > npm install mongoose 
 ```
 
-### Environment   
-Need java 8 JDK installed, you can download it here http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html  
+### Install Mongodb
+You can install it here: https://www.mongodb.org/  
+
+### Install Java 8
+You can install it here: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html  
+
+### Environment  
 Need to include java's bin folder in your path  
 ##### Instructions:  
 * Click windows key and type "change environment variables" and choose "Edit system environment variables" from the list (not edit environment variables for your account)  
