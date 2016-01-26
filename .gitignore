@@ -2,7 +2,14 @@
 #################
 ####### Server 
 
-Server/data
+# Exclude database
+Server/data/journal
+Server/data/*.0
+Server/data/*.ns
+Server/data/*.lock
+Server/data/*.bson
+
+# Exclude Node modules
 Server/node_modules/mongoose
 
 ##############################################

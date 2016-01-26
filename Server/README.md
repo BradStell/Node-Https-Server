@@ -5,6 +5,8 @@ npm install mongodb
 npm install mongoose
 
 ## Additional Info
-You need to make a 'data' directory in the root of your project folder to contain the database information.  
+You need to make a 'data' directory in the root of your Server folder to contain the database information. This file 
+is created for you.
+
 Run the following command from a terminal windows 'mongod --dbpath <path to data folder>' to connect  
-mongodb to your project.
+mongodb to your project. (This is done for you in start.bat)
