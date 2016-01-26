@@ -21,7 +21,12 @@ You can install it here: https://www.mongodb.org/
 You can install it here: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html  
 
 ### Environment  
-Need to include java's bin folder in your path  
+* Need to include java's bin folder in your path  
+  * Example: C:\Program Files\Java\jdk1.8.0_45\bin  
+* Need to include mongodb's bin folder in your path  
+  * Example: C:\Program Files\MongoDB\Server\3.0\bin
+* Need to include node.js's filder in your path  
+  * Example: C:\Program Files\nodejs\
 ##### Instructions:  
 * Click windows key and type "change environment variables" and choose "Edit system environment variables" from the list (not edit environment variables for your account)  
 * Near bottom of the windows click "Environment Variables..." button  
@@ -31,7 +36,7 @@ Need to include java's bin folder in your path
   * Windows 10 -  
     * Click "New" button  
     * Add full path to java bin directory  
-    * Example: on my machine its C:\Program Files\Java\jdk1.8.0_45\bin  
+    * Example: on my machine its C:\Program Files\Java\jdk1.8.0_45\bin for java  
   * Other versions -  
     * hit right arrow key on keyboard  
     * add a ";" (colon) and then the path  
