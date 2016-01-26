@@ -25,8 +25,8 @@ You can install it here: http://www.oracle.com/technetwork/java/javase/downloads
   * Example: C:\Program Files\Java\jdk1.8.0_45\bin  
 * Need to include mongodb's bin folder in your path  
   * Example: C:\Program Files\MongoDB\Server\3.0\bin
-* Need to include node.js's filder in your path  
-  * Example: C:\Program Files\nodejs\
+* Need to include node.js's folder in your path  
+  * Example: C:\Program Files\nodejs\  
 ##### Instructions:  
 * Click windows key and type "change environment variables" and choose "Edit system environment variables" from the list (not edit environment variables for your account)  
 * Near bottom of the windows click "Environment Variables..." button  
