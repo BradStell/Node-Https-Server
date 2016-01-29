@@ -1,19 +1,31 @@
-#tileTitle {
-    -fx-font-family: sans-serif;
-    -fx-font-size: 30;
+#titleLabel {
+	-fx-font-size: 50px;
 }
 
-#mainTitle {
-    -fx-font-family: sans-serif;
-    -fx-font-size: 30;
+.sourceButton {
+	-fx-font-size: 30px;
+	-fx-border-color: black;
+	-fx-border-width: 1px;
 }
 
-#tileBox {
-    -fx-border-color: black;
-    -fx-border-width: 2px;
+#sourceActionsTitleBox {
+	-fx-background-color: rgb(190, 190, 190);
+	-fx-border-color: black;
+	-fx-border-width: 2px;
 }
 
-#tile {
-    -fx-start-margin: 30px;
-    -fx-end-margin: 30px;
+#sourceAddButton {
+	-fx-background-color: rgb(72, 118, 255);
+}
+
+#sourceRemoveButton {
+	-fx-background-color: rgb(30, 144, 255);
+}
+
+#sourceEditButton {
+	-fx-background-color: rgb(0, 191, 255);
+}
+
+#sourceActionsTitle {
+	-fx-font-size: 33px;	
 }

@@ -11,6 +11,8 @@ Server/data/*.bson
 
 # Exclude Node modules
 Server/node_modules/mongoose
+Server/node_modules/basic-auth
+Server/node_modules/mongodb
 
 ##############################################
 #######################
