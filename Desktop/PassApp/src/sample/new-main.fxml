@@ -6,90 +6,108 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1186.0" prefWidth="1880.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
-   <center>
-      <AnchorPane prefHeight="346.0" prefWidth="787.0" BorderPane.alignment="CENTER">
-         <children>
-            <SplitPane id="splitPane" disable="true" dividerPositions="0.47" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-              <items>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="1031.0" prefWidth="1028.0" SplitPane.resizableWithParent="false">
-                     <children>
-                        <ListView id="sourceListView" fx:id="sourceListViewFx" fixedCellSize="24.0" layoutX="150.0" layoutY="8.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                     </children>
-                  </AnchorPane>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="524.0" prefWidth="597.0" SplitPane.resizableWithParent="false">
-                     <children>
-                        <ListView id="accountListView" fx:id="accountListViewFx" layoutX="494.0" layoutY="366.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                     </children>
-                  </AnchorPane>
-              </items>
-            </SplitPane>
-         </children>
-      </AnchorPane>
-   </center>
-   <top>
-      <VBox alignment="CENTER" prefHeight="153.0" prefWidth="1880.0" BorderPane.alignment="CENTER">
-         <children>            
-            <HBox prefHeight="56.0" prefWidth="1880.0">
-               <children>
-                  <MenuBar HBox.hgrow="ALWAYS">
-                    <menus>
-                      <Menu mnemonicParsing="false" text="File">
-                        <items>
-                          <MenuItem mnemonicParsing="false" text="Close" />
-                        </items>
-                      </Menu>
-                      <Menu mnemonicParsing="false" text="Edit">
-                        <items>
-                          <MenuItem mnemonicParsing="false" text="Delete" />
-                        </items>
-                      </Menu>
-                      <Menu mnemonicParsing="false" text="Help">
-                        <items>
-                          <MenuItem mnemonicParsing="false" text="About" />
-                        </items>
-                      </Menu>
-                    </menus>
-                  </MenuBar>
-               </children>
-            </HBox>
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
-               <children>
-                  <Label id="titleLabel" fx:id="titleLabelFx" text="Password Managment" />
-               </children>
-            </HBox>
-         </children></VBox>
-   </top>
-   <left>
-      <VBox alignment="TOP_CENTER" prefHeight="1033.0" prefWidth="249.0" BorderPane.alignment="CENTER">
-         <children>
-         	<HBox id="sourceActionsTitleBox" alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
-               <children>
-                  <Label id="sourceActionsTitle" fx:id="sourceTitleFx" prefHeight="96.0" prefWidth="231.0" text="Source Actions" textAlignment="CENTER" wrapText="true" />
-               </children>
-            </HBox>
-            <HBox id="sourceAddButton" fx:id="sourceAddButtonFx" alignment="CENTER" onMouseClicked="#sourceAddMouseClicked" prefHeight="100.0" prefWidth="200.0" styleClass="sourceButton">
-               <children>
-                  <Label id="sourceAddButtonLabel" fx:id="sourceAddButtonLabelFx" text="Add" />
-               </children>
-            </HBox>
-            <HBox id="sourceRemoveButton" fx:id="sourceRemoveButtonFx" alignment="CENTER" onMouseClicked="#sourceRemoveClicked" prefHeight="100.0" prefWidth="200.0" styleClass="sourceButton">
-               <children>
-                  <Label id="sourceRemoveLabel" fx:id="sourceRemoveLabelFx" text="Remove" />
-               </children>
-            </HBox>
-            <HBox id="sourceEditButton" fx:id="sourceEditButtonFx" alignment="CENTER" onMouseClicked="#sourceEditClicked" prefHeight="100.0" prefWidth="200.0" styleClass="sourceButton">
-               <children>
-                  <Label id="sourceEditLabel" fx:id="sourceEditLabelFx" text="Edit" />
-               </children>
-            </HBox>            
-         </children>
-      </VBox>
-   </left>
-   <bottom>
-      <HBox prefHeight="30.0" prefWidth="1880.0" BorderPane.alignment="CENTER" />
-   </bottom>
-   <right>
-      <VBox prefHeight="1033.0" prefWidth="30.0" BorderPane.alignment="CENTER" />
-   </right>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="898.0" prefWidth="1309.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+
+    <top>
+        <VBox alignment="CENTER" prefHeight="153.0" prefWidth="1880.0" BorderPane.alignment="CENTER">
+            <children>
+                <HBox prefHeight="56.0" prefWidth="1880.0">
+                    <children>
+                        <MenuBar HBox.hgrow="ALWAYS">
+                            <menus>
+                                <Menu mnemonicParsing="false" text="File">
+                                    <items>
+                                        <MenuItem mnemonicParsing="false" text="Close" />
+                                    </items>
+                                </Menu>
+                                <Menu mnemonicParsing="false" text="Edit">
+                                    <items>
+                                        <MenuItem mnemonicParsing="false" text="Delete" />
+                                    </items>
+                                </Menu>
+                                <Menu mnemonicParsing="false" text="Help">
+                                    <items>
+                                        <MenuItem mnemonicParsing="false" text="About" />
+                                    </items>
+                                </Menu>
+                            </menus>
+                        </MenuBar>
+                    </children>
+                </HBox>
+                <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                    <children>
+                        <Label id="titleLabel" fx:id="titleLabelFx" text="Password Managment" />
+                    </children>
+                </HBox>
+            </children></VBox>
+    </top>
+
+    <left>
+        <VBox alignment="TOP_CENTER" prefHeight="1033.0" prefWidth="249.0" BorderPane.alignment="CENTER">
+            <children>
+                <HBox id="sourceActionsTitleBox" alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                    <children>
+                        <Label id="sourceActionsTitle" fx:id="sourceTitleFx" prefHeight="96.0" prefWidth="231.0" text="Source Actions" textAlignment="CENTER" wrapText="true" />
+                    </children>
+                </HBox>
+                <HBox id="sourceAddButton" fx:id="sourceAddButtonFx" alignment="CENTER" onMouseClicked="#sourceAddMouseClicked" prefHeight="100.0" prefWidth="200.0" styleClass="sourceButton">
+                    <children>
+                        <Label id="sourceAddButtonLabel" fx:id="sourceAddButtonLabelFx" text="Add" />
+                    </children>
+                </HBox>
+                <HBox id="sourceRemoveButton" fx:id="sourceRemoveButtonFx" alignment="CENTER" onMouseClicked="#sourceRemoveClicked" prefHeight="100.0" prefWidth="200.0" styleClass="sourceButton">
+                    <children>
+                        <Label id="sourceRemoveLabel" fx:id="sourceRemoveLabelFx" text="Remove" />
+                    </children>
+                </HBox>
+                <HBox id="sourceEditButton" fx:id="sourceEditButtonFx" alignment="CENTER" onMouseClicked="#sourceEditClicked" prefHeight="100.0" prefWidth="200.0" styleClass="sourceButton">
+                    <children>
+                        <Label id="sourceEditLabel" fx:id="sourceEditLabelFx" text="Edit" />
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </left>
+
+    <right>
+        <VBox prefHeight="1033.0" prefWidth="15.0" BorderPane.alignment="CENTER" />
+    </right>
+
+    <center>
+        <AnchorPane prefHeight="346.0" prefWidth="787.0" BorderPane.alignment="CENTER">
+            <children>
+                <SplitPane id="splitPane" disable="true" dividerPositions="0.47" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <items>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="1031.0" prefWidth="1028.0" SplitPane.resizableWithParent="false">
+                            <children>
+                                <ScrollPane fx:id="sourceScrollPane" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <content>
+                                        <VBox fx:id="sourceScrollBox" prefHeight="200.0" prefWidth="100.0" />
+                                    </content>
+                                </ScrollPane>
+                            </children>
+                        </AnchorPane>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="524.0" prefWidth="597.0" SplitPane.resizableWithParent="false">
+                            <children>
+                                <StackPane fx:id="accountStackPane" prefHeight="150.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <children>
+                                        <ScrollPane fx:id="accountScrollPane" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                            <content>
+                                                <VBox fx:id="accountScrollBox" prefHeight="200.0" prefWidth="100.0" />
+                                            </content>
+                                        </ScrollPane>
+                                    </children>
+                                </StackPane>
+                            </children>
+                        </AnchorPane>
+                    </items>
+                </SplitPane>
+            </children>
+        </AnchorPane>
+    </center>
+
+    <bottom>
+        <HBox prefHeight="15.0" prefWidth="1880.0" BorderPane.alignment="CENTER" />
+    </bottom>
+
 </BorderPane>

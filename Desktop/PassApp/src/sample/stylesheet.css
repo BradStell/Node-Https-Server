@@ -29,3 +29,23 @@
 #sourceActionsTitle {
 	-fx-font-size: 33px;	
 }
+
+#sourceTitle {
+	-fx-font-size: 30px;
+}
+
+.accountFont {
+	-fx-font-size: 23px;
+}
+
+.sourceFont {
+	-fx-font-size: 30px;
+}
+
+.scroll-pane > .viewport {
+	-fx-background-color: transparent;
+}
+
+.scroll-pane {
+	-fx-background-color: transparent;
+}
