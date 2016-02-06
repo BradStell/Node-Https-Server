@@ -39,7 +39,8 @@
                         <Label id="titleLabel" fx:id="titleLabelFx" text="Password Managment" />
                     </children>
                 </HBox>
-            </children></VBox>
+            </children>
+        </VBox>
     </top>
 
     <left>
@@ -80,22 +81,14 @@
                     <items>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="1031.0" prefWidth="1028.0" SplitPane.resizableWithParent="false">
                             <children>
-                                <ScrollPane fx:id="sourceScrollPane" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                    <content>
-                                        <VBox fx:id="sourceScrollBox" prefHeight="200.0" prefWidth="100.0" />
-                                    </content>
-                                </ScrollPane>
+                                <ListView id="sourceListView" fixedCellSize="60.0" layoutX="144.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                             </children>
                         </AnchorPane>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="524.0" prefWidth="597.0" SplitPane.resizableWithParent="false">
                             <children>
-                                <StackPane fx:id="accountStackPane" prefHeight="150.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <StackPane fx:id="accountStackPaneFx" prefHeight="150.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                     <children>
-                                        <ScrollPane fx:id="accountScrollPane" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                            <content>
-                                                <VBox fx:id="accountScrollBox" prefHeight="200.0" prefWidth="100.0" />
-                                            </content>
-                                        </ScrollPane>
+                                        <ListView id="accountListView" fx:id="accountListViewFx" fixedCellSize="40.0" prefHeight="200.0" prefWidth="200.0" />
                                     </children>
                                 </StackPane>
                             </children>

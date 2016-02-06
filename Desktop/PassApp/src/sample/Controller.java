@@ -1,42 +1,39 @@
 package sample;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
+import javafx.util.Callback;
 
 import java.net.URL;
+import java.util.HashSet;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 public class Controller implements Initializable {
 
     @FXML
-    ScrollPane sourceScrollPane;
+    StackPane accountStackPaneFx;
 
     @FXML
-    VBox sourceScrollBox;
-
-    @FXML
-    ScrollPane accountScrollPane;
-
-    @FXML
-    StackPane accountStackPane;
-
-    @FXML
-    VBox accountScrollBox;
+    ListView accountListViewFx;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         bindComponents();
         addAccountAddButton();
-        fillInTestTiles();
+        setAccountListView();
     }
 
     @FXML
@@ -52,6 +49,23 @@ public class Controller implements Initializable {
     @FXML
     public void sourceEditClicked() {
 
+    }
+
+    private void setAccountListView() {
+
+        Set<String> stringSet = new HashSet<>();
+        ObservableList observableList = FXCollections.observableArrayList();
+        stringSet.add("String 1");
+        stringSet.add("String 2");
+        stringSet.add("String 3");
+        observableList.setAll(stringSet);
+        accountListViewFx.setItems(observableList);
+        accountListViewFx.setCellFactory(new Callback<ListView, ListCell>() {
+            @Override
+            public ListCell call(ListView listView) {
+                return new ListViewCell();
+            }
+        });
     }
 
     private void addAccountAddButton() {
@@ -87,16 +101,12 @@ public class Controller implements Initializable {
         sp.getChildren().add(horz);
 
 
-        accountStackPane.getChildren().add(sp);
+        accountStackPaneFx.getChildren().add(sp);
         StackPane.setAlignment(sp, Pos.BOTTOM_RIGHT);
     }
 
     public void bindComponents() {
-        sourceScrollBox.prefWidthProperty().bind(sourceScrollPane.widthProperty());
-        sourceScrollBox.prefHeightProperty().bind(sourceScrollPane.heightProperty());
-
-        accountStackPane.prefWidthProperty().bind(accountScrollPane.widthProperty());
-        accountStackPane.prefHeightProperty().bind(accountScrollPane.heightProperty());
+        // TODO handle binds
     }
 
     public void fillInTestTiles() {
@@ -107,36 +117,9 @@ public class Controller implements Initializable {
 
     public void loadSourceData() {
 
-        for (int i = 0; i < 20; i++) {
-            HBox tile;
-
-            try {
-                tile = FXMLLoader.load(getClass().getResource("source-tile.fxml"));
-                sourceScrollBox.getChildren().add(tile);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        sourceScrollPane.setPannable(true);
-        sourceScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        sourceScrollPane.setFitToWidth(true);
-
     }
 
     public void loadAccountData() {
 
-        for (int i = 0; i < 20; i++) {
-            VBox tile;
-
-            try {
-                tile = FXMLLoader.load(getClass().getResource("account-tile.fxml"));
-                accountScrollBox.getChildren().add(tile);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        accountScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        accountScrollPane.setFitToWidth(true);
     }
 }
