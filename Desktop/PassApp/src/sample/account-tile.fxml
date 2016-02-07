@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 
 
-<VBox fx:id="accountTileVboxFx" stylesheets="@stylesheet.css" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="151.0" prefWidth="603.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<VBox fx:id="accountTileVboxFx" styleClass="listCell" stylesheets="@stylesheet.css" maxHeight="Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="151.0" prefWidth="303.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <HBox prefHeight="107.0" prefWidth="603.0">
          <children>

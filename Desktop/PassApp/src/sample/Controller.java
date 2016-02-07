@@ -1,9 +1,10 @@
 package sample;
 
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -17,9 +18,7 @@ import javafx.scene.shape.Line;
 import javafx.util.Callback;
 
 import java.net.URL;
-import java.util.HashSet;
-import java.util.ResourceBundle;
-import java.util.Set;
+import java.util.*;
 
 public class Controller implements Initializable {
 
@@ -29,21 +28,38 @@ public class Controller implements Initializable {
     @FXML
     ListView accountListViewFx;
 
+    @FXML
+    ListView sourceListViewFx;
+
+    List<String> sourceList = new ArrayList<>();
+    Set<String> sourceSet = new HashSet<>();
+    Set<String> accountSet = new HashSet<>();
+    ListProperty<String> listProperty = new SimpleListProperty<>();
+    ObservableList observableSourceList = FXCollections.observableArrayList();
+    ObservableList observableAccountList = FXCollections.observableArrayList();
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         bindComponents();
         addAccountAddButton();
         setAccountListView();
+        setSourceListView();
+
+
+        listProperty.set(observableSourceList);
+        sourceListViewFx.itemsProperty().bind(listProperty);
     }
 
     @FXML
     public void sourceAddMouseClicked() {
 
+        SourceController sourceController = new SourceController(sourceList, listProperty, sourceListViewFx);
     }
 
     @FXML
     public void sourceRemoveClicked() {
 
+        observableSourceList.add("adding");
     }
 
     @FXML
@@ -51,19 +67,38 @@ public class Controller implements Initializable {
 
     }
 
+    private void setSourceListView() {
+
+        // HashSet is unique, no two same elements.
+        // add returns true if successful (element does not already exist)
+        // returns false if not successful (element already exists)
+        sourceList.add("Google");
+        sourceList.add("AOC");
+        sourceList.add("Other");
+        sourceList.add("Other2");
+
+
+        observableSourceList.setAll(sourceList);
+        sourceListViewFx.setItems(observableSourceList);
+        sourceListViewFx.setCellFactory(new Callback<ListView, ListCell>() {
+            @Override
+            public ListCell call(ListView listView) {
+                return new ListViewCell("source");
+            }
+        });
+    }
+
     private void setAccountListView() {
 
-        Set<String> stringSet = new HashSet<>();
-        ObservableList observableList = FXCollections.observableArrayList();
-        stringSet.add("String 1");
-        stringSet.add("String 2");
-        stringSet.add("String 3");
-        observableList.setAll(stringSet);
-        accountListViewFx.setItems(observableList);
+        accountSet.add("String 1~/~Password1");
+        accountSet.add("String 2~/~Password2");
+        accountSet.add("String 3~/~Password3");
+        observableAccountList.setAll(accountSet);
+        accountListViewFx.setItems(observableAccountList);
         accountListViewFx.setCellFactory(new Callback<ListView, ListCell>() {
             @Override
             public ListCell call(ListView listView) {
-                return new ListViewCell();
+                return new ListViewCell("account");
             }
         });
     }

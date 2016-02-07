@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="215.0" prefWidth="426.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <HBox alignment="CENTER" prefHeight="67.0" prefWidth="426.0">
+         <children>
+            <Label text="Creat New Source" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER" prefHeight="69.0" prefWidth="426.0" spacing="20.0">
+         <children>
+            <Label text="Source Name:" />
+            <TextField fx:id="newSourceTfFx" />
+         </children>
+      </HBox>
+      <HBox alignment="BOTTOM_CENTER" prefHeight="81.0" prefWidth="426.0" spacing="20.0">
+         <children>
+            <Button fx:id="createSourceFx" mnemonicParsing="false" text="Create" onMouseClicked="#createClicked">
+               <HBox.margin>
+                  <Insets bottom="20.0" />
+               </HBox.margin>
+            </Button>
+            <Button mnemonicParsing="false" text="Cancel">
+               <HBox.margin>
+                  <Insets bottom="20.0" />
+               </HBox.margin>
+            </Button>
+         </children>
+      </HBox>
+   </children>
+</VBox>

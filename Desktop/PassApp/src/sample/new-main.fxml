@@ -77,18 +77,18 @@
     <center>
         <AnchorPane prefHeight="346.0" prefWidth="787.0" BorderPane.alignment="CENTER">
             <children>
-                <SplitPane id="splitPane" disable="true" dividerPositions="0.47" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <SplitPane id="splitPane" disable="false" dividerPositions="0.47" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <items>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="1031.0" prefWidth="1028.0" SplitPane.resizableWithParent="false">
                             <children>
-                                <ListView id="sourceListView" fixedCellSize="60.0" layoutX="144.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                <ListView id="sourceListView" fx:id="sourceListViewFx" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                             </children>
                         </AnchorPane>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="524.0" prefWidth="597.0" SplitPane.resizableWithParent="false">
                             <children>
                                 <StackPane fx:id="accountStackPaneFx" prefHeight="150.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                     <children>
-                                        <ListView id="accountListView" fx:id="accountListViewFx" fixedCellSize="40.0" prefHeight="200.0" prefWidth="200.0" />
+                                        <ListView id="accountListView" fx:id="accountListViewFx" prefHeight="200.0" prefWidth="200.0" />
                                     </children>
                                 </StackPane>
                             </children>

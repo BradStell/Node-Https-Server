@@ -8,7 +8,7 @@ import javafx.scene.layout.VBox;
 /**
  * Created by Brad on 2/6/2016.
  */
-public class Data {
+public class AccountData {
 
     @FXML
     VBox accountTileVboxFx;
@@ -19,7 +19,7 @@ public class Data {
     @FXML
     Label accountPasswordLabelFx;
 
-    public Data() {
+    public AccountData() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("account-tile.fxml"));
         fxmlLoader.setController(this);
         try {
@@ -30,8 +30,9 @@ public class Data {
     }
 
     public void setInfo(String string) {
-        accountUsernameLabelFx.setText(string);
-        accountPasswordLabelFx.setText(string);
+        String[] buf = string.split("~/~");
+        accountUsernameLabelFx.setText("JRadulus " + buf[0]);
+        accountPasswordLabelFx.setText("Passwordulus " + buf[1]);
     }
 
     public VBox getVbox() {
