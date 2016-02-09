@@ -6,6 +6,7 @@
 	-fx-font-size: 30px;
 	-fx-border-color: black;
 	-fx-border-width: 1px;
+	-fx-cursor: hand;
 }
 
 .sourceButton:hover {
@@ -15,6 +16,7 @@
 
 .sourceButton:pressed {
 	-fx-font-size:15px;
+	-fx-cursor: hand;
 }
 
 #sourceActionsTitleBox {
@@ -63,6 +65,7 @@
 .listCell {
 	-fx-border-width: 2px;
 	-fx-border-color: black;
+	-fx-cursor: hand;
 }
 
 /* List View Style /////////////////////////////////////////////////////////////////*/
@@ -82,4 +85,26 @@
 .list-cell:filled:hover {
 	-fx-background-color: #0093ff;
 	-fx-text-fill: white;
+}
+
+.button:hover {
+	-fx-body-color: rgb(79, 148, 205);
+}
+
+.button {
+	-fx-cursor: hand;
+	//-fx-background-color: linear-gradient(to top, -fx-base, derive(-fx-base,30%));
+	//-fx-background-color: orangered;
+	-fx-body-color: rgb(0, 191, 255);
+	-fx-font-famile: 'MS Reference Specialty';
+	-fx-font-size: 16px;
+	-fx-text-fill: black;
+	-fx-border-color: black;
+	-fx-border-radius: 0.0;
+	-fx-inner-border: black;
+	-fx-outer-border: black;
+}
+
+#messageLabelFx {
+	-fx-text-fill: red;
 }

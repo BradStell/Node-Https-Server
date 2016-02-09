@@ -1,4 +1,4 @@
-package sample;
+package passapp;
 
 /**
  * Created by Brad on 2/8/2016.
@@ -9,8 +9,9 @@ public class Account {
     private String password;
     private Source parent;
 
-    public Account() {
-
+    public Account(String username, String password) {
+        this.username = username;
+        this.password = password;
     }
 
     public String getUsername() {
@@ -35,5 +36,10 @@ public class Account {
 
     public void setParent(Source parent) {
         this.parent = parent;
+    }
+
+    @Override
+    public String toString() {
+        return "Username = " + this.username + " Password = " + this.password;
     }
 }

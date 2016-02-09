@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="223.0" prefWidth="426.0" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <HBox alignment="CENTER" prefHeight="67.0" prefWidth="426.0">
+         <children>
+            <Label text="Creat New Source" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER" prefHeight="69.0" prefWidth="426.0" spacing="20.0">
+         <children>
+            <Label text="Source Name:" />
+            <TextField fx:id="newSourceTfFx" onMouseClicked="#onTextFieldClicked"/>
+         </children>
+      </HBox>
+      <HBox alignment="BOTTOM_CENTER" prefHeight="49.0" prefWidth="426.0" spacing="20.0">
+         <children>
+            <Button fx:id="createSourceFx" mnemonicParsing="false" onMouseClicked="#onCreateClicked" text="Create">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </Button>
+            <Button fx:id="cancelSourceFx" mnemonicParsing="false" onMouseClicked="#onCancelClicked" text="Cancel">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </Button>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER" prefHeight="37.0" prefWidth="426.0">
+         <children>
+            <Label text="" fx:id="messageLabelFx" />
+         </children>
+      </HBox>
+   </children>
+</VBox>

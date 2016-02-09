@@ -1,4 +1,4 @@
-package sample;
+package passapp;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -12,7 +12,8 @@ public class Source {
     private String name;
     private List<Account> accounts;
 
-    public Source() {
+    public Source(String name) {
+        this.name = name;
         accounts = new ArrayList<>();
     }
 
@@ -28,7 +29,16 @@ public class Source {
         return accounts.listIterator();
     }
 
+    public void shit() {
+        System.out.print("Shit");
+    }
+
     public void addAccount(Account account) {
         accounts.add(account);
+    }
+
+    @Override
+    public String toString() {
+        return this.name;
     }
 }

@@ -1,4 +1,4 @@
-package sample;
+package passapp;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -10,7 +10,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("new-main.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("views/new-main.fxml"));
         primaryStage.setTitle("Pass App");
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
