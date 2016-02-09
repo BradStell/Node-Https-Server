@@ -31,10 +31,10 @@ public class Controller implements Initializable {
     @FXML
     ListView sourceListViewFx;
 
-    List<String> sourceList = new ArrayList<>();
     Set<String> sourceSet = new HashSet<>();
     Set<String> accountSet = new HashSet<>();
-    ListProperty<String> listProperty = new SimpleListProperty<>();
+    ListProperty<String> sourceListProperty = new SimpleListProperty<>();
+    ListProperty<String> accountListProperty = new SimpleListProperty<>();
     ObservableList observableSourceList = FXCollections.observableArrayList();
     ObservableList observableAccountList = FXCollections.observableArrayList();
 
@@ -42,18 +42,21 @@ public class Controller implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         bindComponents();
         addAccountAddButton();
-        setAccountListView();
+
+        // Fill in test data
         setSourceListView();
+        setAccountListView();
 
-
-        listProperty.set(observableSourceList);
-        sourceListViewFx.itemsProperty().bind(listProperty);
+        sourceListProperty.set(observableSourceList);
+        accountListProperty.set(observableSourceList);
+        sourceListViewFx.itemsProperty().bind(sourceListProperty);
+        sourceListViewFx.itemsProperty().bind(accountListProperty);
     }
 
     @FXML
     public void sourceAddMouseClicked() {
 
-        SourceController sourceController = new SourceController(sourceList, listProperty, sourceListViewFx);
+        SourceController sourceController = new SourceController(sourceListProperty);
     }
 
     @FXML
@@ -67,18 +70,21 @@ public class Controller implements Initializable {
 
     }
 
+    /**
+     * For Testing
+     */
     private void setSourceListView() {
 
         // HashSet is unique, no two same elements.
         // add returns true if successful (element does not already exist)
         // returns false if not successful (element already exists)
-        sourceList.add("Google");
-        sourceList.add("AOC");
-        sourceList.add("Other");
-        sourceList.add("Other2");
+        sourceSet.add("Google");
+        sourceSet.add("AOC");
+        sourceSet.add("Other");
+        sourceSet.add("Other2");
 
 
-        observableSourceList.setAll(sourceList);
+        observableSourceList.setAll(sourceSet);
         sourceListViewFx.setItems(observableSourceList);
         sourceListViewFx.setCellFactory(new Callback<ListView, ListCell>() {
             @Override
@@ -88,6 +94,9 @@ public class Controller implements Initializable {
         });
     }
 
+    /**
+     * For Testing
+     */
     private void setAccountListView() {
 
         accountSet.add("String 1~/~Password1");
@@ -142,12 +151,6 @@ public class Controller implements Initializable {
 
     public void bindComponents() {
         // TODO handle binds
-    }
-
-    public void fillInTestTiles() {
-
-        loadSourceData();
-        loadAccountData();
     }
 
     public void loadSourceData() {

@@ -24,15 +24,10 @@ public class SourceController {
     @FXML
     Button createSourceFx;
 
-    List<String> sourceList;
-    ListProperty<String> listProperty;
-    ListView lv;
+    ListProperty<String> sourceListProperty;
 
-    public SourceController(List<String> list, ListProperty<String> lp, ListView lv) {
-        sourceList = list;
-        listProperty = lp;
-        this.lv = lv;
-
+    public SourceController(ListProperty<String> sourceListProperty) {
+        this.sourceListProperty = sourceListProperty;
         Parent root;
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("add-source.fxml"));
@@ -50,7 +45,6 @@ public class SourceController {
 
     @FXML
     public void createClicked() {
-        sourceList.add(newSourceTfFx.getText());
-        lv.getItems().clear();
+        sourceListProperty.add(newSourceTfFx.getText());
     }
 }
