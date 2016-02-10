@@ -1,5 +1,11 @@
 package passapp.controllers;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.*;
+
+import com.google.gson.JsonObject;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
@@ -7,16 +13,11 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
 import javafx.util.Callback;
 import passapp.*;
 
@@ -45,55 +46,103 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        bindComponents();
         addAccountAddButton();
 
         // Fill in test data
         setSourceListView();
-        //setAccountListView();
 
-        sourceListViewFx.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-
-                accountListViewFx.getItems().clear();
-                accountSet.clear();
-                observableAccountList.clear();
-
-                Source source = (Source) sourceListViewFx.getSelectionModel().getSelectedItem();
-                Iterator<Account> iterator = source.getAccounts();
-                while (iterator.hasNext()) {
-                    accountSet.add(iterator.next());
-                }
-                observableAccountList.setAll(accountSet);
-                accountListViewFx.setItems(observableAccountList);
-                accountListProperty.set(observableAccountList);
-                accountListViewFx.itemsProperty().bind(accountListProperty);
-                accountListViewFx.setCellFactory(new Callback<ListView, ListCell>() {
-                    @Override
-                    public ListCell call(ListView listView) {
-                        return new AccountListViewCell();
-                    }
-                });
-            }
-        });
+        sourceListViewFx.setOnMouseClicked(sourceListViewClickListener);
     }
 
+    /**
+     * Add source button mouse click listener
+     */
     @FXML
     public void sourceAddMouseClicked() {
 
         SourceController sourceController = new SourceController(sourceListProperty);
     }
 
+    /**
+     * Remove source button mouse click listener
+     */
     @FXML
     public void sourceRemoveClicked() {
 
+        // How do add item to source list view with data bind example
         observableSourceList.add(new Source("new Source " + ++count));
     }
 
+    /**
+     * Edit source button mouse click listener
+     */
     @FXML
     public void sourceEditClicked() {
 
+        try {
+
+
+
+            String url="http://127.0.0.1:3000";
+            URL object=new URL(url);
+
+            HttpURLConnection con = (HttpURLConnection) object.openConnection();
+            con.setDoOutput(true);
+            con.setDoInput(true);
+            con.setRequestProperty("Content-Type", "application/json");
+            con.setRequestProperty("tier1", "45r97diIj3099KpqnzlapEIv810nZaaS0");
+            con.setRequestProperty("Accept", "application/json");
+            con.setRequestMethod("POST");
+            //JSONParser
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("Username", "brad");
+            jsonObject.addProperty("Password", "12345");
+
+            OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
+            wr.write(jsonObject.toString());
+            wr.flush();
+
+            InputStream is = con.getInputStream();
+
+            Scanner scanner = new Scanner(is);
+
+            while (scanner.hasNext()) {
+                System.out.print(scanner.next());
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+            /*String rawData = "tier1";
+            String type = "application/x-www-form-urlencoded";
+            String encodedData = URLEncoder.encode( rawData );
+            URL u = new URL("http://127.0.0.1:3000");
+            HttpURLConnection conn = (HttpURLConnection) u.openConnection();
+            conn.setDoOutput(true);
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty( "Content-Type", type );
+            conn.setRequestProperty( "Content-Length", String.valueOf(encodedData.length()));
+            OutputStream os = conn.getOutputStream();
+            InputStream is = conn.getInputStream();
+            os.write(encodedData.getBytes());
+
+            Scanner scanner = new Scanner(is);
+
+            while (scanner.hasNext()) {
+                System.out.print(scanner.next());
+            }*/
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -101,10 +150,7 @@ public class Controller implements Initializable {
      */
     private void setSourceListView() {
 
-        // HashSet is unique, no two same elements.
-        // add returns true if successful (element does not already exist)
-        // returns false if not successful (element already exists)
-
+        // Create test data for testing
         Source[] sources = new Source[4];
         for (int i = 0; i < 4; i++)
             sources[i] = new Source("Source " + ++count);
@@ -130,117 +176,46 @@ public class Controller implements Initializable {
         });
     }
 
-    /**
-     * For Testing
-     */
-    private void setAccountListView() {
+    private void addAccountAddButton() {
 
-        /*accountSet.add(new Account("String 1", "Password1"));
-        accountSet.add(new Account("String 2", "Password2"));
-        accountSet.add(new Account("String 3", "Password3"));
+        AccountAddButton accountAddButton = new AccountAddButton();
+        accountStackPaneFx.getChildren().add(accountAddButton);
+        StackPane.setAlignment(accountAddButton, Pos.BOTTOM_RIGHT);
+    }
+
+    /**
+     * Listener for the source list view
+     *
+     * clears account list view and binds to clicked sources accounts and displays
+     */
+    private final EventHandler<MouseEvent> sourceListViewClickListener = event -> {
+
+        // clear array lists and list properties and unbind from list view
+        accountSet.clear();
+        accountListViewFx.getItems().clear();
+        accountListViewFx.itemsProperty().unbind();
+        observableAccountList.clear();
+        accountListProperty.unbind();
+
+        Source source = (Source) sourceListViewFx.getSelectionModel().getSelectedItem();
+        Iterator<Account> iterator = source.getAccounts();
+
+        while (iterator.hasNext()) {
+            accountSet.add(iterator.next());
+        }
+
+        // observe new list and bind to list property and set to list view
         observableAccountList.setAll(accountSet);
         accountListViewFx.setItems(observableAccountList);
         accountListProperty.set(observableAccountList);
         accountListViewFx.itemsProperty().bind(accountListProperty);
+
+        // Set cell factory callback to handle custom list cells
         accountListViewFx.setCellFactory(new Callback<ListView, ListCell>() {
             @Override
             public ListCell call(ListView listView) {
                 return new AccountListViewCell();
             }
-        });*/
-    }
-
-    private void addAccountAddButton() {
-
-        StackPane sp = new StackPane();
-        sp.setMaxWidth(40.0f);
-        sp.setMaxHeight(40.0f);
-        sp.setPadding(new Insets(0.0f, 10.0f, 20.0f, 0.0f));
-
-        Circle circle = new Circle();
-        circle.setRadius(30.0f);
-        circle.setFill(Color.CYAN);
-        circle.setEffect(new DropShadow(40.0f, 10.0f, 10.0f, Color.BLACK));
-        circle.setStyle("-fx-cursor: hand");
-
-
-        Line vert = new Line();
-        vert.setStartX(17.0f);
-        vert.setStartY(3.0f);
-        vert.setEndX(17.0f);
-        vert.setEndY(37.0f);
-        vert.setStroke(Color.WHITE);
-        vert.setStrokeWidth(10.0f);
-        vert.setId("#vertRect");
-        vert.setStyle("-fx-cursor: hand");
-
-        Line horz = new Line();
-        horz.setStartX(3.0f);
-        horz.setStartY(17.0f);
-        horz.setEndX(37.0f);
-        horz.setEndY(17.0f);
-        horz.setStroke(Color.WHITE);
-        horz.setStrokeWidth(10.0f);
-        horz.setStyle("-fx-cursor: hand");
-
-        setMouseEvents(circle, vert, horz);
-
-        sp.getChildren().add(circle);
-        sp.getChildren().add(vert);
-        sp.getChildren().add(horz);
-
-
-        accountStackPaneFx.getChildren().add(sp);
-        StackPane.setAlignment(sp, Pos.BOTTOM_RIGHT);
-    }
-
-    private void setMouseEvents(Circle circle, Line vert, Line horz) {
-        circle.setOnMouseEntered( event -> {
-            circle.setFill(Color.CYAN.darker());
-            vert.setStrokeWidth(13.0f);
-            horz.setStrokeWidth(13.0f);
         });
-
-        circle.setOnMouseExited( event -> {
-            circle.setFill(Color.CYAN);
-            vert.setStrokeWidth(10.0f);
-            horz.setStrokeWidth(10.0f);
-        });
-
-        horz.setOnMouseEntered( event -> {
-            circle.setFill(Color.CYAN.darker());
-            vert.setStrokeWidth(13.0f);
-            horz.setStrokeWidth(13.0f);
-        });
-
-        horz.setOnMouseExited( event -> {
-            circle.setFill(Color.CYAN);
-            vert.setStrokeWidth(10.0f);
-            horz.setStrokeWidth(10.0f);
-        });
-
-        vert.setOnMouseEntered( event -> {
-            circle.setFill(Color.CYAN.darker());
-            vert.setStrokeWidth(13.0f);
-            horz.setStrokeWidth(13.0f);
-        });
-
-        vert.setOnMouseExited( event -> {
-            circle.setFill(Color.CYAN);
-            vert.setStrokeWidth(10.0f);
-            horz.setStrokeWidth(10.0f);
-        });
-    }
-
-    public void bindComponents() {
-        // TODO handle binds
-    }
-
-    public void loadSourceData() {
-
-    }
-
-    public void loadAccountData() {
-
-    }
+    };
 }
