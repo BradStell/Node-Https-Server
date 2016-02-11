@@ -4,8 +4,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.*;
+import java.net.URL;
+import java.util.*;
 
 import com.google.gson.JsonObject;
+
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
@@ -19,10 +22,18 @@ import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.util.Callback;
+
 import passapp.*;
 
-import java.net.URL;
-import java.util.*;
+import brad.crypto.JBSCrypto;
+/**
+ * How to Use my encryption module JBSCrypto
+ */
+/*JBSCrypto jbsCrypto = new JBSCrypto();
+String encrypted = jbsCrypto.encrypt("This is what I want to encrypt");
+System.out.println("\n\nEncrypted ==> " + encrypted);
+String decrypted = jbsCrypto.decrypt(encrypted);
+System.out.println("\n\nDecrypted ==> " + decrypted);*/
 
 public class Controller implements Initializable {
 
@@ -79,9 +90,15 @@ public class Controller implements Initializable {
     @FXML
     public void sourceEditClicked() {
 
+        // This is here for testing only
+        /**
+         * Internet connection to password server
+         *
+         * Encrypts message and decrypts response
+         *
+         * Demonstrates a GET from our server
+         */
         try {
-
-
 
             String url="http://127.0.0.1:3000";
             URL object=new URL(url);
@@ -89,56 +106,41 @@ public class Controller implements Initializable {
             HttpURLConnection con = (HttpURLConnection) object.openConnection();
             con.setDoOutput(true);
             con.setDoInput(true);
+
+            // Set header properties
             con.setRequestProperty("Content-Type", "application/json");
             con.setRequestProperty("tier1", "45r97diIj3099KpqnzlapEIv810nZaaS0");
             con.setRequestProperty("Accept", "application/json");
             con.setRequestMethod("POST");
-            //JSONParser
+
+            //JSON body message
             JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("Username", "brad");
+            jsonObject.addProperty("Username", "Brad");
             jsonObject.addProperty("Password", "12345");
+            jsonObject.addProperty("method", "GET");
+
+            //JSON body message
+            //String contactJson = "{\"Username\":\"Brad\",\"Password\":\"12345\",\"method\":\"GET\"}";
+
+            JBSCrypto jbsCrypto = new JBSCrypto();
+            String encrypted = jbsCrypto.encrypt(jsonObject.toString());
 
             OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
-            wr.write(jsonObject.toString());
+            wr.write(encrypted);
             wr.flush();
 
             InputStream is = con.getInputStream();
 
+            // Capture response from server and decrypt
             Scanner scanner = new Scanner(is);
-
+            String data = "";
             while (scanner.hasNext()) {
-                System.out.print(scanner.next());
+                data += scanner.next();
             }
+            String decrypted = jbsCrypto.decrypt(data);
 
-
-
-
-
-
-
-
-
-
-
-
-            /*String rawData = "tier1";
-            String type = "application/x-www-form-urlencoded";
-            String encodedData = URLEncoder.encode( rawData );
-            URL u = new URL("http://127.0.0.1:3000");
-            HttpURLConnection conn = (HttpURLConnection) u.openConnection();
-            conn.setDoOutput(true);
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty( "Content-Type", type );
-            conn.setRequestProperty( "Content-Length", String.valueOf(encodedData.length()));
-            OutputStream os = conn.getOutputStream();
-            InputStream is = conn.getInputStream();
-            os.write(encodedData.getBytes());
-
-            Scanner scanner = new Scanner(is);
-
-            while (scanner.hasNext()) {
-                System.out.print(scanner.next());
-            }*/
+            // Display decrypted response
+            System.out.print(decrypted);
 
         } catch (Exception e) {
             e.printStackTrace();
