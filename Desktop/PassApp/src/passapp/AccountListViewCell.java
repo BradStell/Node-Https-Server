@@ -8,6 +8,12 @@ import passapp.controllers.AccountData;
 
 /**
  * Created by Bradley on 2/9/2016.
+ *
+ * custom ListCell of list view.
+ *
+ * creates AccountData object which is the controller for the fxml code for an
+ * account list cell. Interfaces with controller for creating and displaying
+ * custom fxml layout for listview cell
  */
 public class AccountListViewCell extends ListCell<Account> {
 

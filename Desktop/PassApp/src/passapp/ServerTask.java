@@ -4,6 +4,7 @@ import javafx.concurrent.Task;
 
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Scanner;
@@ -75,11 +76,12 @@ public class ServerTask extends Task<String> {
 
             decrypted = jbsCrypto.decrypt(data.toString());
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (ConnectException e) {
+            //e.printStackTrace();
+            return null;
         }
 
-        return (decrypted != null) ? decrypted : "Null";
+        return (decrypted != null) ? decrypted : null;
     }
 
     @Override

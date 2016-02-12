@@ -108,3 +108,12 @@
 #messageLabelFx {
 	-fx-text-fill: red;
 }
+
+.normalText {
+	-fx-font-family: sans-serif;
+	-fx-font-size: 25px;
+}
+
+#cancelSourceFx {
+	-fx-background-color: red;
+}

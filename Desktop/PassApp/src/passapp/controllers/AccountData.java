@@ -8,6 +8,8 @@ import passapp.Account;
 
 /**
  * Created by Brad on 2/6/2016.
+ *
+ * Controller for account listview cell fxml code
  */
 public class AccountData {
 

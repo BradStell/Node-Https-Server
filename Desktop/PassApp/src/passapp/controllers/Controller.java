@@ -1,27 +1,26 @@
 package passapp.controllers;
 
+import java.io.*;
 import java.net.URL;
 import java.util.*;
 
 import brad.crypto.JBSCrypto;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import javafx.beans.property.ListProperty;
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.WorkerStateEvent;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SplitPane;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 
@@ -51,6 +50,24 @@ public class Controller implements Initializable {
     @FXML
     BorderPane rootWindowFx;
 
+    @FXML
+    MenuItem menuSyncFx;
+
+    @FXML
+    Label informationLabelFx;
+
+    @FXML
+    VBox informationBoxFx;
+
+    @FXML
+    ToggleGroup storageToggleGroup;
+
+    @FXML
+    MenuItem menuKeepStorageFx;
+
+    @FXML
+    MenuItem menuNoStorageFx;
+
     // Hash Sets and properties to bind sets to list view
     Set<Source> sourceSet = new HashSet<>();
     Set<Account> accountSet = new HashSet<>();
@@ -58,6 +75,9 @@ public class Controller implements Initializable {
     ListProperty<Account> accountListProperty = new SimpleListProperty<>();
     ObservableList observableSourceList = FXCollections.observableArrayList();
     ObservableList observableAccountList = FXCollections.observableArrayList();
+
+    String lastSync;
+    Properties properties;
 
     /**
      * Entry method for controller class
@@ -70,8 +90,150 @@ public class Controller implements Initializable {
 
         // Create and draw account add button and place on screen
         addAccountAddButton();
+        setSystemSettings();
 
         sourceListViewFx.setOnMouseClicked(sourceListViewClickListener);
+        menuSyncFx.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                //JSON body message
+                JsonObject jsonObject = new JsonObject();
+                jsonObject.addProperty("Username", "Brad");
+                jsonObject.addProperty("Password", "12345");
+                jsonObject.addProperty("method", "GET");
+
+                TaskService service = new TaskService(jsonObject.toString());
+                //service.setOnSucceeded(handleServerDataEvent);
+                service.setOnSucceeded(handleServerDataEvent);
+                service.setOnFailed(new EventHandler<WorkerStateEvent>() {
+                    @Override
+                    public void handle(WorkerStateEvent event) {
+                        System.out.print("Inform user of failed sync");
+                    }
+                });
+                service.start();
+            }
+        });
+    }
+
+    private void setSystemSettings() {
+
+        Map<String, String> propMap = getPropertiesFromFile();
+        String current = "";
+
+        if (propMap != null) {
+
+            if ( (current = propMap.get("Local-Storage")) != null) {
+                switch(current) {
+                    case "true":
+                        storageToggleGroup.selectToggle((Toggle)menuKeepStorageFx);
+                        Main.storage = Main.Storage.TRUE;
+                        populateListFromStorage();
+                        break;
+                    case "false":
+                        storageToggleGroup.selectToggle((Toggle)menuNoStorageFx);
+                        Main.storage = Main.Storage.FALSE;
+                        break;
+                    default:
+                        storageToggleGroup.selectToggle((Toggle)menuNoStorageFx);
+                }
+            } else
+                storageToggleGroup.selectToggle((Toggle)menuNoStorageFx);
+
+            if ( (current = propMap.get("Color-Theme")) != null) {
+                switch (current) {
+                    case "default":
+                        break;
+                    default:
+                }
+            }
+        }
+    }
+
+    private Map<String, String> getPropertiesFromFile() {
+
+        File file = new File("src/resources/PassApp.properties");
+        properties = new Properties();
+        InputStream inputStream;
+        Map<String, String> propMap = new HashMap<>();
+
+        try {
+            if (! file.exists()) {
+                if (! file.createNewFile())
+                    System.out.print("File creation failed");
+            }
+
+            inputStream = new FileInputStream(file);
+
+            properties.load(inputStream);
+
+            propMap.put("test", properties.getProperty("test"));
+            propMap.put("Local-Storage", properties.getProperty("Local-Storage"));
+            propMap.put("Color-Theme", properties.getProperty("Color-Theme"));
+
+            return propMap;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private void populateListFromStorage() {
+
+        File file = new File("src/resources/local-storage.jbs");
+        BufferedReader bufferedReader;
+        StringBuilder sb = new StringBuilder();
+        String line = "";
+        JBSCrypto jbsCrypto = new JBSCrypto();
+
+        try {
+
+            if (! file.exists())
+                System.out.print("No Storage");
+            else {
+
+                bufferedReader = new BufferedReader(new FileReader(file));
+
+                while ((line = bufferedReader.readLine()) != null) {
+                    sb.append(line);
+                }
+
+                JsonElement rootElement = new JsonParser().parse(jbsCrypto.decrypt(sb.toString()));
+                JsonArray rootArray = rootElement.getAsJsonArray();
+
+                for (int i = 0; i < rootArray.size(); i++) {
+                    Source source = new Source();
+
+                    JsonObject sourceObject = rootArray.get(i).getAsJsonObject();
+                    JsonArray accountArray = sourceObject.getAsJsonArray("accounts");
+
+                    source.setId(sourceObject.get("_id").getAsString());
+                    source.setName(sourceObject.get("name").getAsString());
+                    source.setUserSpelledName(sourceObject.get("userSpelledName").getAsString());
+
+                    for (int j = 0; j < accountArray.size(); j++) {
+                        JsonObject accountObj = accountArray.get(j).getAsJsonObject();
+                        Account account = new Account();
+                        account.setUsername(accountObj.get("username").getAsString());
+                        account.setPassword(accountObj.get("password").getAsString());
+
+                        source.addAccount(account);
+                    }
+
+                    sourceSet.add(source);
+                }
+
+                observableSourceList.setAll(sourceSet);
+                sourceListViewFx.setItems(observableSourceList);
+                sourceListProperty.set(observableSourceList);
+                sourceListViewFx.itemsProperty().bind(sourceListProperty);
+                sourceListViewFx.setCellFactory(listView -> new SourceListViewCell());
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -80,7 +242,7 @@ public class Controller implements Initializable {
     @FXML
     public void sourceAddMouseClicked() {
 
-        SourceController sourceController = new SourceController(sourceListProperty);
+        SourceController sourceController = new SourceController(sourceSet, observableSourceList, sourceListViewFx, sourceListProperty);
     }
 
     /**
@@ -89,13 +251,6 @@ public class Controller implements Initializable {
     @FXML
     public void sourceRemoveClicked() {
 
-        // How do add item to source list view with data bind example
-        /*observableSourceList.add(new Source("new Source " + ++count));*/
-        JBSCrypto jbsCrypto = new JBSCrypto();
-        String encrypted = jbsCrypto.encrypt("This is what I want to encrypt");
-        System.out.println("\n\nEncrypted ==> " + encrypted);
-        String decrypted = jbsCrypto.decrypt(encrypted);
-        System.out.println("\n\nDecrypted ==> " + decrypted);
     }
 
     /**
@@ -104,23 +259,6 @@ public class Controller implements Initializable {
     @FXML
     public void sourceEditClicked() {
 
-        //JSON body message
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("Username", "Brad");
-        jsonObject.addProperty("Password", "12345");
-        jsonObject.addProperty("method", "GET");
-
-        TaskService service = new TaskService(jsonObject.toString());
-        //service.setOnSucceeded(handleServerDataEvent);
-        service.setOnSucceeded(handleServerDataEvent);
-        service.start();
-    }
-
-    /**
-     * For Testing
-     */
-    private void setSourceListView() {
-
     }
 
     private void addAccountAddButton() {
@@ -128,6 +266,41 @@ public class Controller implements Initializable {
         AccountAddButton accountAddButton = new AccountAddButton();
         accountStackPaneFx.getChildren().add(accountAddButton);
         StackPane.setAlignment(accountAddButton, Pos.BOTTOM_RIGHT);
+    }
+
+    @FXML
+    public void keepStorageMenuListener() {
+        Main.storage = Main.Storage.TRUE;
+        saveDataToFile(lastSync);
+        properties.setProperty("Local-Storage", "true");
+        updateProperties();
+    }
+
+    @FXML
+    public void noStorageMenuListener() {
+        Main.storage = Main.Storage.FALSE;
+        removeStorageFile();
+        properties.setProperty("Local-Storage", "false");
+        updateProperties();
+    }
+
+    private void updateProperties() {
+
+        File file = new File("src/resources/PassApp.properties");
+        OutputStream os;
+
+        try {
+            if (! file.exists()) {
+                file.createNewFile();
+            }
+
+            os = new FileOutputStream(file);
+            properties.store(os, "comments");
+            os.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -169,37 +342,102 @@ public class Controller implements Initializable {
     private final EventHandler<WorkerStateEvent> handleServerDataEvent = event -> {
 
         String messageFromService = (String) event.getSource().getValue();
-        System.out.println(messageFromService);
 
-        JsonElement rootElement = new JsonParser().parse(messageFromService);
-        JsonArray rootArray = rootElement.getAsJsonArray();
 
-        for (int i = 0; i < rootArray.size(); i++) {
-            Source source = new Source();
+        ///////////////////////////////////////////
+        //      If null then server offline     //
+        /////////////////////////////////////////
+        if (messageFromService != null) {
 
-            JsonObject sourceObject = rootArray.get(i).getAsJsonObject();
-            JsonArray accountArray = sourceObject.getAsJsonArray("accounts");
+            lastSync = messageFromService;
 
-            source.setId(sourceObject.get("_id").getAsString());
-            source.setName(sourceObject.get("name").getAsString());
-            source.setUserSpelledName(sourceObject.get("userSpelledName").getAsString());
+            if (Main.storage == Main.Storage.TRUE)
+                saveDataToFile(messageFromService);
 
-            for (int j = 0; j < accountArray.size(); j++) {
-                JsonObject accountObj = accountArray.get(j).getAsJsonObject();
-                Account account = new Account();
-                account.setUsername(accountObj.get("username").getAsString());
-                account.setPassword(accountObj.get("password").getAsString());
+            JsonElement rootElement = new JsonParser().parse(messageFromService);
+            JsonArray rootArray = rootElement.getAsJsonArray();
 
-                source.addAccount(account);
+            for (int i = 0; i < rootArray.size(); i++) {
+                Source source = new Source();
+
+                JsonObject sourceObject = rootArray.get(i).getAsJsonObject();
+                JsonArray accountArray = sourceObject.getAsJsonArray("accounts");
+
+                source.setId(sourceObject.get("_id").getAsString());
+                source.setName(sourceObject.get("name").getAsString());
+                source.setUserSpelledName(sourceObject.get("userSpelledName").getAsString());
+
+                for (int j = 0; j < accountArray.size(); j++) {
+                    JsonObject accountObj = accountArray.get(j).getAsJsonObject();
+                    Account account = new Account();
+                    account.setUsername(accountObj.get("username").getAsString());
+                    account.setPassword(accountObj.get("password").getAsString());
+
+                    source.addAccount(account);
+                }
+
+                sourceSet.add(source);
             }
 
-            sourceSet.add(source);
+            observableSourceList.setAll(sourceSet);
+            sourceListViewFx.setItems(observableSourceList);
+            sourceListProperty.set(observableSourceList);
+            sourceListViewFx.itemsProperty().bind(sourceListProperty);
+            sourceListViewFx.setCellFactory(listView -> new SourceListViewCell());
         }
 
-        observableSourceList.setAll(sourceSet);
-        sourceListViewFx.setItems(observableSourceList);
-        sourceListProperty.set(observableSourceList);
-        sourceListViewFx.itemsProperty().bind(sourceListProperty);
-        sourceListViewFx.setCellFactory(listView -> new SourceListViewCell());
+
+        //////////////////////////////
+        //      Server Offline     //
+        ////////////////////////////
+        else {
+            if (Main.storage == Main.Storage.TRUE)
+                populateListFromStorage();
+
+            informationLabelFx.setText("Error syncing with server. Please make sure server is on. We will operate in offline mode for now.");
+            Button okButton = new Button("OK");
+            informationBoxFx.getChildren().add(okButton);
+
+
+            okButton.setOnMouseClicked(event1 -> {
+                informationLabelFx.setText("");
+                informationBoxFx.getChildren().remove(okButton);
+            });
+        }
     };
+
+    private void saveDataToFile(String data) {
+
+        File file = new File("src/resources/local-storage.jbs");
+        BufferedWriter bufferedWriter;
+        JBSCrypto jbsCrypto = new JBSCrypto();
+
+        try {
+            if (! file.exists()) {
+                if (! file.createNewFile())
+                    System.out.print("File creation failed");
+            }
+
+            bufferedWriter = new BufferedWriter(new FileWriter(file));
+            bufferedWriter.write(jbsCrypto.encrypt(data));
+            bufferedWriter.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void removeStorageFile() {
+
+        File file = new File("src/resources/local-storage.jbs");
+
+        try {
+            if (file.exists()) {
+                file.delete();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

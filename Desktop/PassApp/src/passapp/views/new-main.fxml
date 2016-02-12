@@ -17,17 +17,27 @@
                             <menus>
                                 <Menu mnemonicParsing="false" text="File">
                                     <items>
-                                        <MenuItem mnemonicParsing="false" text="Close" />
+                                        <MenuItem fx:id="menuSyncFx" text="Sync" />
+                                        <Menu fx:id="menuMemoryPolicy" text="Local Storage" >
+                                            <fx:define>
+                                                <ToggleGroup fx:id="storageToggleGroup" />
+                                            </fx:define>
+                                            <items>
+                                                <RadioMenuItem id="menuKeepStorage" fx:id="menuKeepStorageFx" text="Keep local storage" selected="false" toggleGroup="$storageToggleGroup" onAction="#keepStorageMenuListener" />
+                                                <RadioMenuItem id="menuNoStorage" fx:id="menuNoStorageFx" text="No local storage" selected="true" toggleGroup="$storageToggleGroup" onAction="#noStorageMenuListener" />
+                                            </items>
+                                        </Menu>
+                                        <MenuItem text="Close" />
                                     </items>
                                 </Menu>
                                 <Menu mnemonicParsing="false" text="Edit">
                                     <items>
-                                        <MenuItem mnemonicParsing="false" text="Delete" />
+                                        <MenuItem text="Delete" />
                                     </items>
                                 </Menu>
                                 <Menu mnemonicParsing="false" text="Help">
                                     <items>
-                                        <MenuItem mnemonicParsing="false" text="About" />
+                                        <MenuItem text="About" />
                                     </items>
                                 </Menu>
                             </menus>
@@ -66,6 +76,15 @@
                         <Label id="sourceEditLabel" fx:id="sourceEditLabelFx" text="Edit" />
                     </children>
                 </HBox>
+                <VBox id="informationBox" fx:id="informationBoxFx" alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" maxHeight="Infinity" maxWidth="Infinity" minHeight="200" minWidth="0" VBox.vgrow="ALWAYS" >
+                    <children>
+                        <Label text="" id="informationLabel" fx:id="informationLabelFx" styleClass="normalText" wrapText="true" >
+                            <VBox.margin>
+                                <Insets left="5.0" right="5.0" top="5.0" bottom="5.0" />
+                            </VBox.margin>
+                        </Label>
+                    </children>
+                </VBox>
             </children>
         </VBox>
     </left>

@@ -8,6 +8,8 @@ import passapp.Source;
 
 /**
  * Created by Brad on 2/6/2016.
+ *
+ * controller for source list view cell fxml
  */
 public class SourceData {
 
