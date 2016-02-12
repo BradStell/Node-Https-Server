@@ -91,29 +91,22 @@ public class Controller implements Initializable {
         // Create and draw account add button and place on screen
         addAccountAddButton();
         setSystemSettings();
+        sync();
 
         sourceListViewFx.setOnMouseClicked(sourceListViewClickListener);
-        menuSyncFx.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                //JSON body message
-                JsonObject jsonObject = new JsonObject();
-                jsonObject.addProperty("Username", "Brad");
-                jsonObject.addProperty("Password", "12345");
-                jsonObject.addProperty("method", "GET");
+        menuSyncFx.setOnAction( event -> sync());
+    }
 
-                TaskService service = new TaskService(jsonObject.toString());
-                //service.setOnSucceeded(handleServerDataEvent);
-                service.setOnSucceeded(handleServerDataEvent);
-                service.setOnFailed(new EventHandler<WorkerStateEvent>() {
-                    @Override
-                    public void handle(WorkerStateEvent event) {
-                        System.out.print("Inform user of failed sync");
-                    }
-                });
-                service.start();
-            }
-        });
+    private void sync() {
+        //JSON body message
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("Username", "Brad");
+        jsonObject.addProperty("Password", "12345");
+        jsonObject.addProperty("method", "GET");
+
+        TaskService service = new TaskService(jsonObject.toString());
+        service.setOnSucceeded(handleServerDataEvent);
+        service.start();
     }
 
     private void setSystemSettings() {
@@ -128,7 +121,7 @@ public class Controller implements Initializable {
                     case "true":
                         storageToggleGroup.selectToggle((Toggle)menuKeepStorageFx);
                         Main.storage = Main.Storage.TRUE;
-                        populateListFromStorage();
+                        //populateListFromStorage();
                         break;
                     case "false":
                         storageToggleGroup.selectToggle((Toggle)menuNoStorageFx);
@@ -342,14 +335,15 @@ public class Controller implements Initializable {
     private final EventHandler<WorkerStateEvent> handleServerDataEvent = event -> {
 
         String messageFromService = (String) event.getSource().getValue();
-
+        JBSCrypto jbsCrypto = new JBSCrypto();
 
         ///////////////////////////////////////////
         //      If null then server offline     //
         /////////////////////////////////////////
         if (messageFromService != null) {
 
-            lastSync = messageFromService;
+            lastSync = jbsCrypto.encrypt(messageFromService);
+            Main.server = Main.Server.ON;
 
             if (Main.storage == Main.Storage.TRUE)
                 saveDataToFile(messageFromService);
@@ -391,6 +385,8 @@ public class Controller implements Initializable {
         //      Server Offline     //
         ////////////////////////////
         else {
+
+            Main.server = Main.Server.OFF;
             if (Main.storage == Main.Storage.TRUE)
                 populateListFromStorage();
 

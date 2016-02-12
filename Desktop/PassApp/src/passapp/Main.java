@@ -12,7 +12,13 @@ public class Main extends Application {
         FALSE, TRUE
     }
 
+    public enum Server {
+        ON, OFF
+    }
+
+    public static String booty;
     public static Storage storage;
+    public static Server server;
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -20,10 +26,6 @@ public class Main extends Application {
         primaryStage.setTitle("Pass App");
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
-    }
-
-    public static Storage checkStorageFlag() {
-        return storage;
     }
 
     public static void main(String[] args) {
