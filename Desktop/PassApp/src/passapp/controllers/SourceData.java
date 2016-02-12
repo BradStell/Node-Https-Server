@@ -33,7 +33,7 @@ public class SourceData {
         if (sourceTitleFx == null) {
             System.out.print("\n\nIts null\n\n");
         } else {
-            sourceTitleFx.setText(source.toString());
+            sourceTitleFx.setText(source.getUserSpelledName());
         }
     }
 

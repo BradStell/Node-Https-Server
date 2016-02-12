@@ -9,6 +9,8 @@ import javafx.scene.shape.Line;
 
 /**
  * Created by Brad on 2/10/2016.
+ *
+ * This is the circular button with a plus sign on it for adding new accounts
  */
 public class AccountAddButton extends StackPane {
 

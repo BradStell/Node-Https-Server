@@ -1,42 +1,38 @@
 package passapp.controllers;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.*;
 import java.net.URL;
 import java.util.*;
 
+import brad.crypto.JBSCrypto;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import javafx.beans.property.ListProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
-import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.SplitPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
-import javafx.util.Callback;
 
 import passapp.*;
 
-import brad.crypto.JBSCrypto;
 /**
- * How to Use my encryption module JBSCrypto
+ * Main controller for interfacing with new-main.fxml code
  */
-/*JBSCrypto jbsCrypto = new JBSCrypto();
-String encrypted = jbsCrypto.encrypt("This is what I want to encrypt");
-System.out.println("\n\nEncrypted ==> " + encrypted);
-String decrypted = jbsCrypto.decrypt(encrypted);
-System.out.println("\n\nDecrypted ==> " + decrypted);*/
-
 public class Controller implements Initializable {
 
+    // UI elements bound by fx:id
     @FXML
     StackPane accountStackPaneFx;
 
@@ -45,7 +41,15 @@ public class Controller implements Initializable {
 
     @FXML
     ListView sourceListViewFx;
-    static int count = 0;
+
+    @FXML
+    SplitPane splitPaneFx;
+
+    @FXML
+    AnchorPane centerAnchorFx;
+
+    @FXML
+    BorderPane rootWindowFx;
 
     // Hash Sets and properties to bind sets to list view
     Set<Source> sourceSet = new HashSet<>();
@@ -55,12 +59,17 @@ public class Controller implements Initializable {
     ObservableList observableSourceList = FXCollections.observableArrayList();
     ObservableList observableAccountList = FXCollections.observableArrayList();
 
+    /**
+     * Entry method for controller class
+     *
+     * @param location
+     * @param resources
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        addAccountAddButton();
 
-        // Fill in test data
-        setSourceListView();
+        // Create and draw account add button and place on screen
+        addAccountAddButton();
 
         sourceListViewFx.setOnMouseClicked(sourceListViewClickListener);
     }
@@ -81,7 +90,12 @@ public class Controller implements Initializable {
     public void sourceRemoveClicked() {
 
         // How do add item to source list view with data bind example
-        observableSourceList.add(new Source("new Source " + ++count));
+        /*observableSourceList.add(new Source("new Source " + ++count));*/
+        JBSCrypto jbsCrypto = new JBSCrypto();
+        String encrypted = jbsCrypto.encrypt("This is what I want to encrypt");
+        System.out.println("\n\nEncrypted ==> " + encrypted);
+        String decrypted = jbsCrypto.decrypt(encrypted);
+        System.out.println("\n\nDecrypted ==> " + decrypted);
     }
 
     /**
@@ -90,61 +104,16 @@ public class Controller implements Initializable {
     @FXML
     public void sourceEditClicked() {
 
-        // This is here for testing only
-        /**
-         * Internet connection to password server
-         *
-         * Encrypts message and decrypts response
-         *
-         * Demonstrates a GET from our server
-         */
-        try {
+        //JSON body message
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("Username", "Brad");
+        jsonObject.addProperty("Password", "12345");
+        jsonObject.addProperty("method", "GET");
 
-            String url="http://127.0.0.1:3000";
-            URL object=new URL(url);
-
-            HttpURLConnection con = (HttpURLConnection) object.openConnection();
-            con.setDoOutput(true);
-            con.setDoInput(true);
-
-            // Set header properties
-            con.setRequestProperty("Content-Type", "application/json");
-            con.setRequestProperty("tier1", "45r97diIj3099KpqnzlapEIv810nZaaS0");
-            con.setRequestProperty("Accept", "application/json");
-            con.setRequestMethod("POST");
-
-            //JSON body message
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("Username", "Brad");
-            jsonObject.addProperty("Password", "12345");
-            jsonObject.addProperty("method", "GET");
-
-            //JSON body message
-            //String contactJson = "{\"Username\":\"Brad\",\"Password\":\"12345\",\"method\":\"GET\"}";
-
-            JBSCrypto jbsCrypto = new JBSCrypto();
-            String encrypted = jbsCrypto.encrypt(jsonObject.toString());
-
-            OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
-            wr.write(encrypted);
-            wr.flush();
-
-            InputStream is = con.getInputStream();
-
-            // Capture response from server and decrypt
-            Scanner scanner = new Scanner(is);
-            String data = "";
-            while (scanner.hasNext()) {
-                data += scanner.next();
-            }
-            String decrypted = jbsCrypto.decrypt(data);
-
-            // Display decrypted response
-            System.out.print(decrypted);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        TaskService service = new TaskService(jsonObject.toString());
+        //service.setOnSucceeded(handleServerDataEvent);
+        service.setOnSucceeded(handleServerDataEvent);
+        service.start();
     }
 
     /**
@@ -152,30 +121,6 @@ public class Controller implements Initializable {
      */
     private void setSourceListView() {
 
-        // Create test data for testing
-        Source[] sources = new Source[4];
-        for (int i = 0; i < 4; i++)
-            sources[i] = new Source("Source " + ++count);
-
-        sources[0].addAccount(new Account("Username Uno", "Password Uno"));
-        sources[0].addAccount(new Account("Username UnoUno", "Password UnoUno"));
-        sources[1].addAccount(new Account("Username Dos", "Password Dos"));
-        sources[2].addAccount(new Account("Username Tres", "Password Tres"));
-        sources[3].addAccount(new Account("Username Quatro", "Password Quatro"));
-
-        for (int i = 0; i < 4; i++)
-            sourceSet.add(sources[i]);
-
-        observableSourceList.setAll(sourceSet);
-        sourceListViewFx.setItems(observableSourceList);
-        sourceListProperty.set(observableSourceList);
-        sourceListViewFx.itemsProperty().bind(sourceListProperty);
-        sourceListViewFx.setCellFactory(new Callback<ListView, ListCell>() {
-            @Override
-            public ListCell call(ListView listView) {
-                return new SourceListViewCell();
-            }
-        });
     }
 
     private void addAccountAddButton() {
@@ -193,31 +138,68 @@ public class Controller implements Initializable {
     private final EventHandler<MouseEvent> sourceListViewClickListener = event -> {
 
         // clear array lists and list properties and unbind from list view
-        accountSet.clear();
-        accountListViewFx.getItems().clear();
-        accountListViewFx.itemsProperty().unbind();
-        observableAccountList.clear();
-        accountListProperty.unbind();
+        if (accountSet.size() > 0) {
+            accountSet.clear();
+            observableAccountList.clear();
+            accountListViewFx.itemsProperty().unbind();
+        }
 
+        // Get account list iterator for clicked on Source
         Source source = (Source) sourceListViewFx.getSelectionModel().getSelectedItem();
         Iterator<Account> iterator = source.getAccounts();
 
+        // Add Source's accounts to list view bound set for viewing
         while (iterator.hasNext()) {
             accountSet.add(iterator.next());
         }
 
-        // observe new list and bind to list property and set to list view
+        // Bind list view to observable list and bind properties
         observableAccountList.setAll(accountSet);
         accountListViewFx.setItems(observableAccountList);
         accountListProperty.set(observableAccountList);
         accountListViewFx.itemsProperty().bind(accountListProperty);
 
         // Set cell factory callback to handle custom list cells
-        accountListViewFx.setCellFactory(new Callback<ListView, ListCell>() {
-            @Override
-            public ListCell call(ListView listView) {
-                return new AccountListViewCell();
+        accountListViewFx.setCellFactory(listView -> new AccountListViewCell());
+    };
+
+    /**
+     *
+     */
+    private final EventHandler<WorkerStateEvent> handleServerDataEvent = event -> {
+
+        String messageFromService = (String) event.getSource().getValue();
+        System.out.println(messageFromService);
+
+        JsonElement rootElement = new JsonParser().parse(messageFromService);
+        JsonArray rootArray = rootElement.getAsJsonArray();
+
+        for (int i = 0; i < rootArray.size(); i++) {
+            Source source = new Source();
+
+            JsonObject sourceObject = rootArray.get(i).getAsJsonObject();
+            JsonArray accountArray = sourceObject.getAsJsonArray("accounts");
+
+            source.setId(sourceObject.get("_id").getAsString());
+            source.setName(sourceObject.get("name").getAsString());
+            source.setUserSpelledName(sourceObject.get("userSpelledName").getAsString());
+
+            for (int j = 0; j < accountArray.size(); j++) {
+                JsonObject accountObj = accountArray.get(j).getAsJsonObject();
+                Account account = new Account();
+                account.setUsername(accountObj.get("username").getAsString());
+                account.setPassword(accountObj.get("password").getAsString());
+
+                source.addAccount(account);
             }
-        });
+
+            sourceSet.add(source);
+        }
+
+        observableSourceList.setAll(sourceSet);
+        sourceListViewFx.setItems(observableSourceList);
+        sourceListProperty.set(observableSourceList);
+        sourceListViewFx.itemsProperty().bind(sourceListProperty);
+        sourceListViewFx.setCellFactory(listView -> new SourceListViewCell());
     };
 }

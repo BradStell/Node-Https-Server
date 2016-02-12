@@ -9,6 +9,8 @@ public class Account {
     private String password;
     private Source parent;
 
+    public Account() {}
+
     public Account(String username, String password) {
         this.username = username;
         this.password = password;

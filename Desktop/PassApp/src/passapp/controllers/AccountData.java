@@ -26,8 +26,7 @@ public class AccountData {
         try {
             fxmlLoader.load();
         } catch (Exception e) {
-            //e.printStackTrace();
-            System.out.print("\n\nIn account fxml load catch\n\n");
+            e.printStackTrace();
         }
     }
 
@@ -35,9 +34,13 @@ public class AccountData {
         if (accountUsernameLabelFx == null || accountPasswordLabelFx == null) {
             System.out.print("\n\nAccount is null\n\n");
         } else {
-            accountUsernameLabelFx.setText("JRadulus " + account.getUsername());
-            accountPasswordLabelFx.setText("Passwordulus " + account.getPassword());
+            accountUsernameLabelFx.setText(account.getUsername());
+            accountPasswordLabelFx.setText("*************");
         }
+    }
+
+    public Label getPWLabel() {
+        return accountPasswordLabelFx;
     }
 
     public VBox getVbox() {

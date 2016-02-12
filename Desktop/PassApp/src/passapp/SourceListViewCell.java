@@ -16,6 +16,8 @@ public class SourceListViewCell extends ListCell<Source> {
             SourceData sourceData = new SourceData();
             sourceData.setInfo(item);
             setGraphic(sourceData.getHbox());
+        } else {
+            setGraphic(null);
         }
     }
 }
