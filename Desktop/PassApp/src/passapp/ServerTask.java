@@ -2,7 +2,9 @@ package passapp;
 
 import javafx.concurrent.Task;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
@@ -29,6 +31,11 @@ import brad.crypto.JBSCrypto;
 public class ServerTask extends Task<String> {
 
     String messageBody;
+    boolean failed = false;
+
+    public ServerTask() {
+        super();
+    }
 
     public ServerTask(String messageBody) {
         super();
@@ -42,10 +49,10 @@ public class ServerTask extends Task<String> {
 
         try {
 
-            String url = "http://127.0.0.1:3000";
-            URL object = new URL(url);
+            String serverIP = "http://127.0.0.1:3000";
+            URL url = new URL(serverIP);
 
-            HttpURLConnection con = (HttpURLConnection) object.openConnection();
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setDoOutput(true);
             con.setDoInput(true);
 
@@ -63,60 +70,22 @@ public class ServerTask extends Task<String> {
             OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
             wr.write(encrypted);
             wr.flush();
+            wr.close();
 
-            // Create stream for server response
-            InputStream is = con.getInputStream();
-            Scanner scanner = new Scanner(is);
+            BufferedReader bf = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            String line;
             StringBuilder data = new StringBuilder();
-
-            // Get input from server
-            while (scanner.hasNext()) {
-                data.append(scanner.next());
+            while ((line = bf.readLine()) != null) {
+                data.append(line);
             }
+            bf.close();
 
             decrypted = jbsCrypto.decrypt(data.toString());
 
         } catch (ConnectException e) {
-            //e.printStackTrace();
-            return null;
+            cancel();
         }
 
         return (decrypted != null) ? decrypted : null;
-    }
-
-    @Override
-    protected void done() {
-        super.done();
-        System.out.print("\ndone");
-    }
-
-    @Override
-    public void run() {
-        super.run();
-        System.out.print("\nrun");
-    }
-
-    @Override
-    protected void succeeded() {
-        super.succeeded();
-        System.out.print("\nsucceeded");
-    }
-
-    @Override
-    protected void cancelled() {
-        super.cancelled();
-        System.out.print("\ncancelled");
-    }
-
-    @Override
-    protected void failed() {
-        super.failed();
-        System.out.print("\nfailed");
-    }
-
-    @Override
-    protected void running() {
-        super.running();
-        System.out.print("\nrunning");
     }
 }

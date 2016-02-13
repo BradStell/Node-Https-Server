@@ -20,4 +20,12 @@ public class TaskService extends Service<String> {
     protected Task<String> createTask() {
         return new ServerTask(message);
     }
+
+    @Override
+    protected void failed() {
+        super.failed();
+        System.out.print("In TaskService failed");
+    }
+
+
 }

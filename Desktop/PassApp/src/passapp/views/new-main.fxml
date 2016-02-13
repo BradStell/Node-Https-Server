@@ -76,15 +76,7 @@
                         <Label id="sourceEditLabel" fx:id="sourceEditLabelFx" text="Edit" />
                     </children>
                 </HBox>
-                <VBox id="informationBox" fx:id="informationBoxFx" alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" maxHeight="Infinity" maxWidth="Infinity" minHeight="200" minWidth="0" VBox.vgrow="ALWAYS" >
-                    <children>
-                        <Label text="" id="informationLabel" fx:id="informationLabelFx" styleClass="normalText" wrapText="true" >
-                            <VBox.margin>
-                                <Insets left="5.0" right="5.0" top="5.0" bottom="5.0" />
-                            </VBox.margin>
-                        </Label>
-                    </children>
-                </VBox>
+                <VBox id="informationBox" fx:id="informationBoxFx" alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" maxHeight="Infinity" maxWidth="Infinity" minHeight="200" minWidth="0" VBox.vgrow="ALWAYS" />
             </children>
         </VBox>
     </left>

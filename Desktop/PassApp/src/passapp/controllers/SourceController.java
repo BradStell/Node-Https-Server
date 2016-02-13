@@ -73,9 +73,6 @@ public class SourceController {
             sourceListViewFx.itemsProperty().bind(sourceListProperty);
             sourceListViewFx.setCellFactory(listView -> new SourceListViewCell());
             stage.close();
-
-
-
         }
     }
 
