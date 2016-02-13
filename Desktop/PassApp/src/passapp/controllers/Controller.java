@@ -93,9 +93,6 @@ public class Controller implements Initializable {
     ObservableList observableSourceList = FXCollections.observableArrayList();
     ObservableList observableAccountList = FXCollections.observableArrayList();
 
-    // Holds last server get in case of save after server offline (stored encrypted in variable)
-    String lastSync;
-
     // Properties file filled from PassApp.properties file
     Properties properties;
 
@@ -159,8 +156,8 @@ public class Controller implements Initializable {
     @FXML
     public void keepStorageMenuListener() {
         Main.storage = Main.Storage.TRUE;
-        saveDataToFile(lastSync, false);
         properties.setProperty("Local-Storage", "true");
+        saveDataToFile(buildDataStringFromList(), true);
         updateProperties();
     }
 
@@ -183,6 +180,34 @@ public class Controller implements Initializable {
     //                              PRIVATE INTERNAL METHODS                                           //
     /////////////////                                                          /////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private String buildDataStringFromList() {
+
+        JsonArray rootArray = new JsonArray();
+
+        for (Source source : sourceSet) {
+            JsonObject sourceObject = new JsonObject();
+            sourceObject.addProperty("_id", source.getId());
+            sourceObject.addProperty("userSpelledName", source.getUserSpelledName());
+            sourceObject.addProperty("name", source.getName());
+
+            JsonArray accountArray = new JsonArray();
+            Iterator<Account> iterator = source.getAccounts();
+            while (iterator.hasNext()){
+                JsonObject accountObj = new JsonObject();
+                Account account = iterator.next();
+                accountObj.addProperty("username", account.getUsername());
+                accountObj.addProperty("password", account.getPassword());
+                accountArray.add(accountObj);
+            }
+            sourceObject.add("accounts", accountArray);
+            rootArray.add(sourceObject);
+        }
+
+        System.out.print(rootArray.toString());
+
+        return rootArray.toString();
+    }
 
     private void fullServerSync() {
         //TODO figure out how to order this to account for offline changes
@@ -218,6 +243,39 @@ public class Controller implements Initializable {
 
     private void serverPUT() {
         //TODO handle server PUT
+        /*String sourceName = "";
+        String toChange = "";
+        String username = "";
+        String old = "";
+        String neW = "";
+
+        //JSON body message
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("Username", "Brad");
+        jsonObject.addProperty("Password", "12345");
+        jsonObject.addProperty("method", "PUT");
+
+        JsonObject restOfContent = new JsonObject();
+        restOfContent.addProperty("name", sourceName);
+        restOfContent.addProperty("toChange", toChange);
+        restOfContent.addProperty("username", username);
+        restOfContent.addProperty("old", old);
+        restOfContent.addProperty("new", neW);
+
+        jsonObject.add("restOfContent", restOfContent);
+
+        TaskService service = new TaskService(jsonObject.toString());
+        service.setOnSucceeded(handleServerDataEvent);
+        service.setOnCancelled(event -> {
+            if (Main.server != Main.Server.OFF) {
+                Main.server = Main.Server.OFF;
+                if (Main.storage == Main.Storage.TRUE)
+                    populateListFromStorage();
+            }
+
+            displayInformation("Error syncing with server. Please make sure server is on. We will operate in offline mode for now.");
+        });
+        service.start();*/
     }
 
     private void serverPOST() {
@@ -540,7 +598,6 @@ public class Controller implements Initializable {
         /////////////////////////////////////////
         if (messageFromService != null) {
 
-            lastSync = jbsCrypto.encrypt(messageFromService);
             Main.server = Main.Server.ON;
 
             if (Main.storage == Main.Storage.TRUE)
