@@ -1,7 +1,8 @@
-package passapp;
+package passapp.ServerCommunication;
 
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import passapp.ServerCommunication.ServerTask;
 
 /**
  * Created by Brad on 2/11/2016.

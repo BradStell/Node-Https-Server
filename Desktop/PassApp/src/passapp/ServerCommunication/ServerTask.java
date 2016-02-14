@@ -1,4 +1,4 @@
-package passapp;
+package passapp.ServerCommunication;
 
 import javafx.concurrent.Task;
 

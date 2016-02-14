@@ -12,7 +12,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import passapp.Source;
-import passapp.SourceListViewCell;
+import passapp.CustomOverrides.SourceListViewCell;
 
 import java.util.Set;
 
