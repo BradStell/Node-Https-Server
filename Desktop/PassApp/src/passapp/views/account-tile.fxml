@@ -5,47 +5,50 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-
-<VBox fx:id="accountTileVboxFx" styleClass="listCell" stylesheets="@../stylesheet.css" maxHeight="Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="151.0" prefWidth="303.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <HBox prefHeight="107.0" prefWidth="603.0">
-         <children>
-            <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
-               <children>
-                  <Label styleClass="accountFont" text="Username:">
-                     <HBox.margin>
-                        <Insets left="30.0" />
-                     </HBox.margin>
-                  </Label>
-               </children>
-               <HBox.margin>
-                  <Insets />
-               </HBox.margin>
-            </HBox>
-            <HBox alignment="CENTER_LEFT" prefHeight="77.0" prefWidth="404.0">
-               <children>
-                  <Label id="accountUsernameLabel" fx:id="accountUsernameLabelFx" styleClass="accountFont" text="Label" />
-               </children>
-            </HBox>
-         </children>
-      </HBox>
-      <HBox prefHeight="105.0" prefWidth="603.0">
-         <children>
-            <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
-               <children>
-                  <Label styleClass="accountFont" text="Password:">
-                     <HBox.margin>
-                        <Insets left="30.0" />
-                     </HBox.margin>
-                  </Label>
-               </children>
-            </HBox>
-            <HBox alignment="CENTER_LEFT" prefHeight="75.0" prefWidth="403.0">
-               <children>
-                  <Label id="accountPasswordLabel" fx:id="accountPasswordLabelFx" styleClass="accountFont" text="Label" />
-               </children>
-            </HBox>
-         </children>
-      </HBox>
-   </children>
-</VBox>
+<StackPane fx:id="accountRootStackPane" styleClass="listCell" stylesheets="@../stylesheet.css" maxHeight="Infinity" maxWidth="Infinity"
+           minHeight="-Infinity" minWidth="-Infinity" prefHeight="151.0" prefWidth="303.0" xmlns="http://javafx.com/javafx/8"
+           xmlns:fx="http://javafx.com/fxml/1">
+   <VBox fx:id="accountTileVboxFx"  >
+      <children>
+         <HBox prefHeight="107.0" prefWidth="603.0">
+            <children>
+               <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
+                  <children>
+                     <Label styleClass="accountFont" text="Username:">
+                        <HBox.margin>
+                           <Insets left="30.0" />
+                        </HBox.margin>
+                     </Label>
+                  </children>
+                  <HBox.margin>
+                     <Insets />
+                  </HBox.margin>
+               </HBox>
+               <HBox alignment="CENTER_LEFT" prefHeight="77.0" prefWidth="404.0">
+                  <children>
+                     <Label id="accountUsernameLabel" fx:id="accountUsernameLabelFx" styleClass="accountFont" text="Label" />
+                  </children>
+               </HBox>
+            </children>
+         </HBox>
+         <HBox prefHeight="105.0" prefWidth="603.0">
+            <children>
+               <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
+                  <children>
+                     <Label styleClass="accountFont" text="Password:">
+                        <HBox.margin>
+                           <Insets left="30.0" />
+                        </HBox.margin>
+                     </Label>
+                  </children>
+               </HBox>
+               <HBox alignment="CENTER_LEFT" prefHeight="75.0" prefWidth="403.0">
+                  <children>
+                     <Label id="accountPasswordLabel" fx:id="accountPasswordLabelFx" styleClass="accountFont" text="Label" />
+                  </children>
+               </HBox>
+            </children>
+         </HBox>
+      </children>
+   </VBox>
+</StackPane>
