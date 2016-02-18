@@ -17,13 +17,16 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 
+import javafx.stage.Stage;
 import passapp.*;
 import passapp.CustomOverrides.AccountAddButton;
 import passapp.CustomOverrides.AccountListViewCell;
@@ -145,6 +148,14 @@ public class Controller implements Initializable {
     @FXML
     public void sourceRemoveClicked() {
 
+        Source source = (Source) sourceListViewFx.getSelectionModel().getSelectedItem();
+        if (source != null) {
+            DeleteSourceDialogController controller = new DeleteSourceDialogController(source, observableSourceList, accountListViewFx);
+        }
+
+        else {
+            DisplayMessageToUser.displayMessage("You must select a source to remove.");
+        }
     }
 
     /**
@@ -241,7 +252,7 @@ public class Controller implements Initializable {
                     populateListFromStorage();
             }
 
-            displayInformation("Error syncing with server. Please make sure server is on. We will operate in offline mode for now.");
+            DisplayMessageToUser.displayMessage("Error syncing with server. Please make sure server is on. We will operate in offline mode for now.");
         });
         service.start();
     }
@@ -444,14 +455,6 @@ public class Controller implements Initializable {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Displays text to information pane with OK button to clear message
-     * @param info
-     */
-    public void displayInformation(String info) {
-        DisplayMessageToUser.displayMessage(info);
     }
 
     /**

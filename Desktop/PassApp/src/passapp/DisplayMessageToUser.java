@@ -17,6 +17,7 @@ public abstract class DisplayMessageToUser {
     }
 
     public static void displayMessage(String message) {
+
         informationBoxFx.getChildren().clear();
 
         Label informationLabel = new Label("");

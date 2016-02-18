@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+
+<VBox stylesheets="@../stylesheet.css" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="170.0" prefWidth="298.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <HBox alignment="CENTER" prefHeight="122.0" prefWidth="298.0">
+         <children>
+            <Label text="This opperation will delete this source and its accounts permenantly. Are you sure you want to do this?" wrapText="true" />
+         </children>
+         <padding>
+            <Insets left="20.0" right="20.0" />
+         </padding>
+      </HBox>
+      <HBox alignment="CENTER" prefHeight="50.0" prefWidth="298.0" spacing="20.0">
+         <children>
+            <Button fx:id="okButtonFx" mnemonicParsing="false" text="OK" onMouseClicked="#okButtonClicked" />
+            <Button fx:id="cancelButtonFx" mnemonicParsing="false" text="Cancel" styleClass="cancelButton" onMouseClicked="#cancelButtonClicked"/>
+         </children>
+      </HBox>
+   </children>
+</VBox>
