@@ -232,7 +232,7 @@ public class Controller implements Initializable {
         jsonObject.addProperty("method", "GET");
 
         TaskService service = new TaskService(jsonObject.toString());
-        service.setOnSucceeded(handleServerDataEvent);
+        service.setOnSucceeded(handleServerGetDataEvent);
         service.setOnCancelled(event -> {
             if (Main.server != Main.Server.OFF) {
                 Main.server = Main.Server.OFF;
@@ -247,39 +247,6 @@ public class Controller implements Initializable {
 
     private void serverPUT() {
         //TODO handle server PUT
-        /*String sourceName = "";
-        String toChange = "";
-        String username = "";
-        String old = "";
-        String neW = "";
-
-        //JSON body message
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("Username", "Brad");
-        jsonObject.addProperty("Password", "12345");
-        jsonObject.addProperty("method", "PUT");
-
-        JsonObject restOfContent = new JsonObject();
-        restOfContent.addProperty("name", sourceName);
-        restOfContent.addProperty("toChange", toChange);
-        restOfContent.addProperty("username", username);
-        restOfContent.addProperty("old", old);
-        restOfContent.addProperty("new", neW);
-
-        jsonObject.add("restOfContent", restOfContent);
-
-        TaskService service = new TaskService(jsonObject.toString());
-        service.setOnSucceeded(handleServerDataEvent);
-        service.setOnCancelled(event -> {
-            if (Main.server != Main.Server.OFF) {
-                Main.server = Main.Server.OFF;
-                if (Main.storage == Main.Storage.TRUE)
-                    populateListFromStorage();
-            }
-
-            displayInformation("Error syncing with server. Please make sure server is on. We will operate in offline mode for now.");
-        });
-        service.start();*/
     }
 
     private void serverPOST() {
@@ -296,6 +263,7 @@ public class Controller implements Initializable {
     private void addAccountAddButton() {
 
         AccountAddButton accountAddButton = new AccountAddButton();
+        accountAddButton.setOnMouseClicked(addAccountListener);
         accountStackPaneFx.getChildren().add(accountAddButton);
         StackPane.setAlignment(accountAddButton, Pos.BOTTOM_RIGHT);
     }
@@ -592,7 +560,7 @@ public class Controller implements Initializable {
      *  IF server offline, sets necessary flags and attempts to populate list from
      *  local storage if option enabled
      */
-    private final EventHandler<WorkerStateEvent> handleServerDataEvent = event -> {
+    private final EventHandler<WorkerStateEvent> handleServerGetDataEvent = event -> {
 
         String messageFromService = (String) event.getSource().getValue();
         JBSCrypto jbsCrypto = new JBSCrypto();
@@ -638,6 +606,16 @@ public class Controller implements Initializable {
             }
 
             displayInformation("Error syncing with server. Please make sure server is on. We will operate in offline mode for now.");*/
+        }
+    };
+
+    private final EventHandler<MouseEvent> addAccountListener = event -> {
+
+        Source parent = (Source) sourceListViewFx.getSelectionModel().getSelectedItem();
+
+        if (parent != null) {
+            System.out.print("source is = " + parent);
+            AddAccountController addAccountController = new AddAccountController(parent, observableAccountList);
         }
     };
 }
