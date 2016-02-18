@@ -1,6 +1,5 @@
 package passapp.controllers;
 
-import brad.crypto.JBSCrypto;
 import com.google.gson.JsonObject;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -13,7 +12,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import passapp.Account;
-import passapp.Main;
+import passapp.DisplayMessageToUser;
 import passapp.ServerCommunication.TaskService;
 import passapp.Source;
 
@@ -49,14 +48,14 @@ public class AddAccountController {
         try {
             root = fxmlLoader.load();
             stage = new Stage();
-            stage.setTitle("Creat New Source");
+            stage.setTitle("Create New Account");
             stage.setScene(new Scene(root));
             stage.show();
 
             okButtonFx.setOnMouseClicked(handlePostEvent);
 
             cancelButtonFx.setOnMouseClicked(event ->  {
-
+                stage.close();
             });
 
         } catch (Exception e) {
@@ -82,16 +81,27 @@ public class AddAccountController {
         TaskService service = new TaskService(jsonObject.toString());
         service.setOnSucceeded(e -> {
             String messageFromService = (String) e.getSource().getValue();
-            JBSCrypto jbsCrypto = new JBSCrypto();
-
-            System.out.print(messageFromService);
-            Account account = new Account();
-            account.setUsername(username);
-            account.setPassword(password);
-
-            parent.addAccount(account);
-            list.add(account);
+            updateUI(messageFromService);
+            stage.close();
+        });
+        service.setOnCancelled(e -> {
+            String messageFromService = (String) e.getSource().getValue();
+            updateUI(messageFromService);
+            stage.close();
+            //TODO handle logic if server is offline
         });
         service.start();
     };
+
+    private void updateUI(String message) {
+
+        System.out.print(message);
+        Account account = new Account();
+        account.setUsername(usernameFx.getText());
+        account.setPassword(passwordFx.getText());
+
+        parent.addAccount(account);
+        list.add(account);
+        DisplayMessageToUser.displayMessage(message);
+    }
 }

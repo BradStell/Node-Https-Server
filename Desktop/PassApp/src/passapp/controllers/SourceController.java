@@ -1,5 +1,6 @@
 package passapp.controllers;
 
+import com.google.gson.JsonObject;
 import javafx.beans.property.ListProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -11,6 +12,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import passapp.Account;
+import passapp.Main;
+import passapp.ServerCommunication.TaskService;
 import passapp.Source;
 import passapp.CustomOverrides.SourceListViewCell;
 
@@ -23,6 +27,12 @@ public class SourceController {
 
     @FXML
     TextField newSourceTfFx;
+
+    @FXML
+    TextField accountUsernameFx;
+
+    @FXML
+    TextField accountPasswordFx;
 
     @FXML
     Button createSourceFx;
@@ -62,18 +72,45 @@ public class SourceController {
 
     @FXML
     public void onCreateClicked() {
-        if (newSourceTfFx.getText().equals("")) {
-            messageLabelFx.setText("You must enter a name");
+        if (newSourceTfFx.getText().equals("") || accountPasswordFx.getText().equals("") || accountUsernameFx.getText().equals("")) {
+            messageLabelFx.setText("You left required fields blank");
         } else {
-            System.out.print(newSourceTfFx.getText() + "---");
-            sourceSet.add(new Source(newSourceTfFx.getText()));
-            observableSourceList.setAll(sourceSet);
-            sourceListViewFx.setItems(observableSourceList);
-            sourceListProperty.set(observableSourceList);
-            sourceListViewFx.itemsProperty().bind(sourceListProperty);
-            sourceListViewFx.setCellFactory(listView -> new SourceListViewCell());
+            Source source = new Source();
+            source.setUserSpelledName(newSourceTfFx.getText());
+            source.setName(newSourceTfFx.getText().toLowerCase());
+            Account account = new Account();
+            account.setUsername(accountUsernameFx.getText());
+            account.setPassword(accountPasswordFx.getText());
+            account.setParent(source);
+            source.addAccount(account);
+            observableSourceList.add(source);
             stage.close();
+
+            doServerPost();
         }
+    }
+
+    private void doServerPost() {
+
+        JsonObject message = new JsonObject();
+        message.addProperty("Username", "Brad");
+        message.addProperty("Password", "12345");
+        message.addProperty("method", "POST");
+        JsonObject restOfContent = new JsonObject();
+        restOfContent.addProperty("name", newSourceTfFx.getText());
+        restOfContent.addProperty("username", accountUsernameFx.getText());
+        restOfContent.addProperty("password", accountPasswordFx.getText());
+        message.add("restOfContent", restOfContent);
+
+        TaskService service = new TaskService(message.toString());
+        service.setOnSucceeded(event -> {
+            String messageFromService = (String) event.getSource().getValue();
+            System.out.print(messageFromService);
+        });
+        service.setOnCancelled(event -> {
+            System.out.print("Server no online");
+        });
+        service.start();
     }
 
     @FXML

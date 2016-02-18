@@ -113,6 +113,7 @@ public class Controller implements Initializable {
         addAccountAddButton();
         setSystemSettings();
         fullServerSync();
+        DisplayMessageToUser.bindUIComponents(informationBoxFx);
 
         sourceListViewFx.setOnMouseClicked(sourceListViewClickListener);
         menuSyncFx.setOnAction( event -> fullServerSync() );
@@ -412,6 +413,7 @@ public class Controller implements Initializable {
                 Account account = new Account();
                 account.setUsername(accountObj.get("username").getAsString());
                 account.setPassword(accountObj.get("password").getAsString());
+                account.setParent(source);
 
                 source.addAccount(account);
             }
@@ -448,21 +450,8 @@ public class Controller implements Initializable {
      * Displays text to information pane with OK button to clear message
      * @param info
      */
-    private void displayInformation(String info) {
-        informationBoxFx.getChildren().clear();
-
-        Label informationLabel = new Label("");
-        informationLabel.setText(info);
-        VBox.setMargin(informationLabel, new Insets(10.0, 5.0, 5.0, 5.0));
-        informationLabel.setWrapText(true);
-        Button okButton = new Button("OK");
-        informationBoxFx.getChildren().add(informationLabel);
-        informationBoxFx.getChildren().add(okButton);
-
-
-        okButton.setOnMouseClicked(event1 -> {
-            informationBoxFx.getChildren().clear();
-        });
+    public void displayInformation(String info) {
+        DisplayMessageToUser.displayMessage(info);
     }
 
     /**
@@ -551,7 +540,7 @@ public class Controller implements Initializable {
         accountListViewFx.itemsProperty().bind(accountListProperty);
 
         // Set cell factory callback to handle custom list cells
-        accountListViewFx.setCellFactory(listView -> new AccountListViewCell());
+        accountListViewFx.setCellFactory(listView -> new AccountListViewCell(observableAccountList));
     };
 
     /**

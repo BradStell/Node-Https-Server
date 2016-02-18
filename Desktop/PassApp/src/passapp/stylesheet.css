@@ -114,6 +114,6 @@
 	-fx-font-size: 25px;
 }
 
-#cancelSourceFx {
+.cancelButton {
 	-fx-background-color: red;
 }

@@ -1,25 +1,31 @@
 package passapp.CustomOverrides;
 
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.input.MouseEvent;
 import passapp.Account;
-import passapp.controllers.AccountData;
+import passapp.controllers.AccountListCellController;
 
 /**
  * Created by Bradley on 2/9/2016.
  *
  * custom ListCell of list view.
  *
- * creates AccountData object which is the controller for the fxml code for an
+ * creates AccountListCellController object which is the controller for the fxml code for an
  * account list cell. Interfaces with controller for creating and displaying
  * custom fxml layout for listview cell
  */
 public class AccountListViewCell extends ListCell<Account> {
 
     Account cellItem;
-    AccountData accountData;
+    AccountListCellController accountData;
+    ObservableList<Account> observableList;
+
+    public AccountListViewCell(ObservableList<Account> observableList) {
+        this.observableList = observableList;
+    }
 
     @Override
     protected void updateItem(Account item, boolean empty) {
@@ -27,7 +33,7 @@ public class AccountListViewCell extends ListCell<Account> {
 
         if (item != null) {
             cellItem = item;
-            accountData = new AccountData();
+            accountData = new AccountListCellController(cellItem, observableList);
             accountData.setInfo(item);
             setGraphic(accountData.getVbox());
 

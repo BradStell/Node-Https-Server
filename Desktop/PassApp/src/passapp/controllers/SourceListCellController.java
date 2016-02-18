@@ -11,7 +11,7 @@ import passapp.Source;
  *
  * controller for source list view cell fxml
  */
-public class SourceData {
+public class SourceListCellController {
 
     @FXML
     Label sourceTitleFx;
@@ -19,7 +19,7 @@ public class SourceData {
     @FXML
     HBox sourceTileHboxFx;
 
-    public SourceData() {
+    public SourceListCellController() {
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../views/source-tile.fxml"));
         fxmlLoader.setController(this);
