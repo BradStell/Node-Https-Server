@@ -24,7 +24,7 @@ public class AccountDeleteButton extends StackPane {
 
         this.setMaxWidth(10.0f);
         this.setMaxHeight(10.0f);
-        this.setPadding(new Insets(10.0f, 10.0f, 0.0f, 0.0f));
+        this.setMargin(this, new Insets(10.0f, 10.0f, 0.0f, 0.0f));
 
         circle = new Circle();
         circle.setRadius(10.0f);

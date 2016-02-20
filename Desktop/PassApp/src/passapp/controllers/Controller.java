@@ -17,16 +17,12 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 
-import javafx.stage.Stage;
 import passapp.*;
 import passapp.CustomOverrides.AccountAddButton;
 import passapp.CustomOverrides.AccountListViewCell;
@@ -114,11 +110,20 @@ public class Controller implements Initializable {
 
         // Create and draw account add button and place on screen
         addAccountAddButton();
+
+        // set system settings from properties file
         setSystemSettings();
+
+        // attempt a server sync
         fullServerSync();
+
+        // pass information text area to display method class
         DisplayMessageToUser.bindUIComponents(informationBoxFx);
 
+        // set click listener on source list view (left list view)
         sourceListViewFx.setOnMouseClicked(sourceListViewClickListener);
+
+        // set click listener on the menu sync option
         menuSyncFx.setOnAction( event -> fullServerSync() );
     }
 
@@ -139,6 +144,7 @@ public class Controller implements Initializable {
      */
     @FXML
     public void sourceAddMouseClicked() {
+        // show user new add source view and bind to controller
         SourceController sourceController = new SourceController(sourceSet, observableSourceList, sourceListViewFx, sourceListProperty);
     }
 
@@ -148,11 +154,16 @@ public class Controller implements Initializable {
     @FXML
     public void sourceRemoveClicked() {
 
+        // get clicked source (if they clicked one)
         Source source = (Source) sourceListViewFx.getSelectionModel().getSelectedItem();
+
+        // if there is a source clicked
         if (source != null) {
+            // show user delete source dialog and bind to controller
             DeleteSourceDialogController controller = new DeleteSourceDialogController(source, observableSourceList, accountListViewFx);
         }
 
+        // if there is not a source clicked
         else {
             DisplayMessageToUser.displayMessage("You must select a source to remove.");
         }
@@ -171,10 +182,16 @@ public class Controller implements Initializable {
      */
     @FXML
     public void keepStorageMenuListener() {
+
+        // Set global runtime setting to keep storage
         Main.storage = Main.Storage.TRUE;
+
+        // change property in properties file to keep local storage
         properties.setProperty("Local-Storage", "true");
-        saveDataToFile(buildDataStringFromList(), true);
         updateProperties();
+
+        // save current password information to file
+        saveDataToFile(buildDataStringFromList(), true);
     }
 
     /**
