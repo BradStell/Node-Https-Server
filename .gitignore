@@ -49,6 +49,6 @@ Android/Thumbs.db
 ##############
 ######    Desktop App
 
-Desktop/PassApp/.idea
+Desktop/PassApp/.idea/workspace.xml
+Desktop/PassApp/.idea/tasks.xml
 Desktop/PassApp/out
-Desktop/PassApp/PassApp.iml
