@@ -8,9 +8,12 @@ var url = require('url');
 */
 function start(route, handle) {
 	
-	http.createServer(function(req, res) {
-		
+	http.createServer(function(req, res) {		
+
+    // Display 'server hit' message
 		console.log("server hit");
+
+    // Get pathname
 		var pathname = url.parse(req.url).pathname;
 		
 		// Check for authentication in header
@@ -35,8 +38,8 @@ function start(route, handle) {
 	Send error message to client
 */
 function displayErrorMessage(response) {
-	response.writeHead(404, {"Content-Type": "text/plain"});
-	response.write("Web page not found");
+	response.writeHead(404, {"Content-Type": "text/html"});
+	response.write("<h1>404 Not Found</h1>");
 	response.end();
 }
 

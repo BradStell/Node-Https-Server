@@ -18,6 +18,8 @@ import passapp.DisplayMessageToUser;
 import passapp.Main;
 import passapp.ServerCommunication.TaskService;
 
+import java.util.Set;
+
 /**
  * Created by Brad on 2/6/2016.
  *
@@ -45,15 +47,17 @@ public class AccountListCellController {
     // Other objects
     Account account;                        // The account that is in the list cell
     ObservableList<Account> accountList;    // The observable list that populates the listview
+    Set<Account> accountSet;
 
     /**
      * Constructor
      * @param account The account that represents the listview cell item
      * @param accountList
      */
-    public AccountListCellController(Account account, ObservableList<Account> accountList) {
+    public AccountListCellController(Account account, ObservableList<Account> accountList, Set<Account> accountSet) {
         this.account = account;
         this.accountList = accountList;
+        this.accountSet = accountSet;
 
         // Load account list view cell tile fxml code for populating
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../views/account-tile.fxml"));
@@ -120,6 +124,7 @@ public class AccountListCellController {
             JBSCrypto jbsCrypto = new JBSCrypto();
 
             accountList.remove(account);
+            accountSet.remove(account);
 
             System.out.print(messageFromService);
         });
@@ -129,6 +134,7 @@ public class AccountListCellController {
                 Main.server = Main.Server.OFF;
             }
             accountList.remove(account);
+            accountSet.remove(account);
             DisplayMessageToUser.displayMessage("Error syncing with server. Please make sure server is on. We will operate in offline mode for now and sync with server when it comes back online.");
         });
         service.start();

@@ -8,6 +8,8 @@ import javafx.scene.input.MouseEvent;
 import passapp.Account;
 import passapp.controllers.AccountListCellController;
 
+import java.util.Set;
+
 /**
  * Created by Bradley on 2/9/2016.
  *
@@ -22,9 +24,11 @@ public class AccountListViewCell extends ListCell<Account> {
     Account cellItem;
     AccountListCellController accountData;
     ObservableList<Account> observableList;
+    Set<Account> accountSet;
 
-    public AccountListViewCell(ObservableList<Account> observableList) {
+    public AccountListViewCell(ObservableList<Account> observableList, Set<Account> accountSet) {
         this.observableList = observableList;
+        this.accountSet = accountSet;
     }
 
     @Override
@@ -33,7 +37,7 @@ public class AccountListViewCell extends ListCell<Account> {
 
         if (item != null) {
             cellItem = item;
-            accountData = new AccountListCellController(cellItem, observableList);
+            accountData = new AccountListCellController(cellItem, observableList, accountSet);
             accountData.setInfo(item);
             setGraphic(accountData.getVbox());
 

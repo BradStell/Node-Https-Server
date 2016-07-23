@@ -44,7 +44,7 @@ var req = http.request(options, function(response) {
 // POST data to send to server, must have correct username/password
 var secretMessage = {
 	'Username': 'Brad',
-    'Password': '12345',
+    'Password': '1234',
     'method': 'GET'
 };
 

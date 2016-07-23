@@ -6,7 +6,15 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane fx:id="rootWindowFx" maxHeight="Infinity" maxWidth="Infinity" minHeight="0" minWidth="0" prefHeight="898.0" prefWidth="1309.0" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="passapp.controllers.Controller">
+<BorderPane fx:id="rootWindowFx"
+            maxHeight="Infinity"
+            maxWidth="Infinity"
+            minHeight="0" minWidth="0"
+            prefHeight="898.0" prefWidth="1309.0"
+            stylesheets="@../stylesheet.css"
+            xmlns="http://javafx.com/javafx/8"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="passapp.controllers.Controller">
 
     <top>
         <VBox alignment="CENTER" prefHeight="153.0" prefWidth="1880.0" BorderPane.alignment="CENTER">

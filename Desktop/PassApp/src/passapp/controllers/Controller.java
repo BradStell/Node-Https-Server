@@ -88,12 +88,14 @@ public class Controller implements Initializable {
     /////////////////                                                          /////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // Hash Sets and properties to bind sets to list view
+    // Hash Sets and properties to bind source sets to list view
     Set<Source> sourceSet = new HashSet<>();
-    Set<Account> accountSet = new HashSet<>();
     ListProperty<Source> sourceListProperty = new SimpleListProperty<>();
-    ListProperty<Account> accountListProperty = new SimpleListProperty<>();
     ObservableList observableSourceList = FXCollections.observableArrayList();
+
+    // Hash Sets and properties to bind source sets to list view
+    Set<Account> accountSet = new HashSet<>();
+    ListProperty<Account> accountListProperty = new SimpleListProperty<>();
     ObservableList observableAccountList = FXCollections.observableArrayList();
 
     // Properties file filled from PassApp.properties file
@@ -560,7 +562,7 @@ public class Controller implements Initializable {
         accountListViewFx.itemsProperty().bind(accountListProperty);
 
         // Set cell factory callback to handle custom list cells
-        accountListViewFx.setCellFactory(listView -> new AccountListViewCell(observableAccountList));
+        accountListViewFx.setCellFactory(listView -> new AccountListViewCell(observableAccountList, accountSet));
     };
 
     /**
